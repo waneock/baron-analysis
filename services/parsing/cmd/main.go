@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
 	"skinbaron-analyzer/pkg/logger"
 	"skinbaron-analyzer/services/parsing/internal/config"
+	"skinbaron-analyzer/services/parsing/internal/repository"
 )
 
 func main() {
@@ -21,11 +23,17 @@ func main() {
 	if err != nil {
 		log.Error("error when trying to create a new database",
 			"error", err)
+		os.Exit(1)
 	}
 
 	defer db.Close()
 
-	// storage
+	// repo
+	repo := repository.New(db)
+	if repo == nil {
+		log.Error("error when trying to create a repository")
+		os.Exit(1)
+	}
 
 	log.Info("app successfully initialized")
 }
