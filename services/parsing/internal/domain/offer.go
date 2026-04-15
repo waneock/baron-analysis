@@ -9,7 +9,7 @@ type Offer struct {
 	Tax              int
 	ClassID          string
 	InstanceID       string
-	AppID            string
+	AppID            int
 	ContextID        string
 	AssetID          string
 	Name             string

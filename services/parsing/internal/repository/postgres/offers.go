@@ -29,7 +29,7 @@ func (o *OffersRepo) CreateMany(ctx context.Context, offers []domain.Offer) erro
 	)
 
 	stringBuilder.WriteString(`
-		INSERT INTO offers (
+		INSERT INTO orders (
 			id, price, commission, tax, classid, instanceid, appid, contextid,
 			assetid, name, offerid, state, escrow_end_date, list_time,
 			last_updated, wear, txid, trade_locked, addons, buyer_country_code
@@ -69,6 +69,8 @@ func (o *OffersRepo) CreateMany(ctx context.Context, offers []domain.Offer) erro
 			offer.Wear,
 			offer.TxID,
 			offer.TradeLocked,
+			offer.Addons,
+			offer.BuyerCountryCode,
 		)
 
 		argPos += 20

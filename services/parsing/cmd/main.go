@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"os"
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
 	"skinbaron-analyzer/pkg/logger"
+	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/config"
 	"skinbaron-analyzer/services/parsing/internal/repository"
+	"skinbaron-analyzer/services/parsing/internal/usecase"
+	"time"
 )
 
 func main() {
@@ -36,6 +40,11 @@ func main() {
 	}
 
 	log.Info("app successfully initialized")
+
+	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
+	sales := usecase.New(baronClient, repo.OffersRepository, log)
+	ctx := context.Background()
+	sales.SyncOffers(ctx)
 }
 
 func makeDBConfigData(cfg *config.Config) *db.DBConfigData {
