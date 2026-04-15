@@ -22,6 +22,6 @@ CREATE TABLE IF NOT EXISTS orders (
     txid                text,
     trade_locked        boolean NOT NULL DEFAULT false,
 
-    addons              text[] NOT NULL DEFAULT '{}',
+    addons              text[] NULL,
     buyer_country_code  varchar(10)
 );
