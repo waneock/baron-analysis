@@ -45,9 +45,9 @@ message Offer {
   string name = 10;
   string offer_id = 11;
   int64 state = 12;
-  string escrow_end_date = 13;
-  string list_time = 14;
-  string last_updated = 15;
+  google.protobuf.Timestamp escrow_end_date = 13;
+  google.protobuf.Timestamp list_time = 14;
+  google.protobuf.Timestamp last_updated = 15;
   double wear = 16;
   string txid = 17;
   bool trade_locked = 18;
