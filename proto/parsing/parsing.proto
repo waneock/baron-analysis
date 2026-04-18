@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package parsing.v1;
+
+option go_package = "skinbaron-analyzer/proto/parsing/v1;parsingv1";
+
+import "google/protobuf/timestamp.proto";
+
+service ParsingService {
+  rpc SyncOffers(SyncOffersRequest) returns (SyncOffersResponse);
+  rpc ListOffers(ListOffersRequest) returns (ListOffersResponse);
+}
+
+message SyncOffersRequest {}
+
+message SyncOffersResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListOffersRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+  optional int64 state = 3;
+  optional int64 app_id = 4;
+  optional string name_query = 5;
+  optional double min_price = 6;
+  optional double max_price = 7;
+  optional google.protobuf.Timestamp list_time = 8;
+  optional google.protobuf.Timestamp last_updated = 9;
+  optional string sort_by = 10;
+  optional string sort_order = 11;
+}
+
+message Offer {
+  string id = 1;
+  double price = 2;
+  double commission = 3;
+  double tax = 4;
+  string class_id = 5;
+  string instance_id = 6;
+  int64 app_id = 7;
+  string context_id = 8;
+  string asset_id = 9;
+  string name = 10;
+  string offer_id = 11;
+  int64 state = 12;
+  string escrow_end_date = 13;
+  string list_time = 14;
+  string last_updated = 15;
+  double wear = 16;
+  string txid = 17;
+  bool trade_locked = 18;
+  repeated string addons = 19;
+  string buyer_country_code = 20;
+}
+
+message ListOffersResponse {
+  repeated Offer items = 1;
+  int64 total = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
