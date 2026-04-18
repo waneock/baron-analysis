@@ -56,14 +56,10 @@ type GetSalesResponse struct {
 func (b *BaronClient) GetSales(ctx context.Context, afterSaleID string) (*GetSalesResponse, error) {
 	getSalesPayload := createGetSalesOffer(b.apiKey, afterSaleID)
 
-	fmt.Println("get sales payload: ", getSalesPayload)
-
 	bodyBytes, err := json.Marshal(getSalesPayload)
 	if err != nil {
 		return nil, fmt.Errorf("baron: offer: marshal request body %w", err)
 	}
-
-	fmt.Println("get sales payload: ", string(bodyBytes))
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()

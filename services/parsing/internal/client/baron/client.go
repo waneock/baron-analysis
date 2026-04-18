@@ -41,8 +41,6 @@ func (b *BaronClient) createRequest(ctx context.Context, method string, endpoint
 		return nil, fmt.Errorf("%s: %w", ErrParseURL, err)
 	}
 
-	fmt.Printf("createRequest: url: %s\n", url)
-
 	// var bodyReader *bytes.Reader
 	// bodyReader = bytes.NewReader(body)
 	// if body != nil {

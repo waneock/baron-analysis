@@ -6,11 +6,9 @@ import (
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
 	"skinbaron-analyzer/pkg/logger"
-	"skinbaron-analyzer/services/parsing/internal/client/baron"
+	"skinbaron-analyzer/services/parsing/internal/app"
 	"skinbaron-analyzer/services/parsing/internal/config"
-	"skinbaron-analyzer/services/parsing/internal/repository"
 	"skinbaron-analyzer/services/parsing/internal/usecase"
-	"time"
 )
 
 func main() {
@@ -33,18 +31,38 @@ func main() {
 	defer db.Close()
 
 	// repo
-	repo := repository.New(db)
-	if repo == nil {
+	repos := app.NewRepositories(db)
+	if repos == nil {
 		log.Error("error when trying to create a repository")
 		os.Exit(1)
 	}
 
 	log.Info("app successfully initialized")
 
-	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
-	sales := usecase.New(baronClient, repo.OffersRepository, log)
+	// baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
+	// sales := usecase.NewGetSalesService(baronClient, repos.Offers, log)
+	// ctx := context.Background()
+	// sales.SyncOffers(ctx)
+
 	ctx := context.Background()
-	sales.SyncOffers(ctx)
+	listOffersSvc := usecase.NewListOfferService(repos.Offers, log)
+	ctx = context.Background()
+	appId := 730
+	state := 2
+	filter := usecase.ListOffersInput{
+		Limit:  100,
+		Offset: 0,
+		AppID:  &appId,
+
+		State: &state,
+	}
+	listOffers, err := listOffersSvc.GetOffers(ctx, filter)
+	if err != nil {
+		log.Info("get offers",
+			"error", err)
+	}
+
+	log.Info("list offers: ", "offers", listOffers)
 }
 
 func makeDBConfigData(cfg *config.Config) *db.DBConfigData {

@@ -16,15 +16,15 @@ type OffersRepo interface {
 	CreateMany(ctx context.Context, offers []domain.Offer) error
 }
 
-type Service struct {
+type GetSalesService struct {
 	client      OffersClient
 	repo        OffersRepo
 	logger      *slog.Logger
 	afterSaleID string
 }
 
-func New(client OffersClient, repo OffersRepo, logger *slog.Logger) *Service {
-	return &Service{
+func NewGetSalesService(client OffersClient, repo OffersRepo, logger *slog.Logger) *GetSalesService {
+	return &GetSalesService{
 		client:      client,
 		repo:        repo,
 		logger:      logger,
@@ -32,38 +32,38 @@ func New(client OffersClient, repo OffersRepo, logger *slog.Logger) *Service {
 	}
 }
 
-func (s *Service) SyncOffers(ctx context.Context) {
+func (uc *GetSalesService) SyncOffers(ctx context.Context) {
 	cnt := 0
 	for {
 		cnt += 1
-		s.logger.Info("sync offers: ",
+		uc.logger.Info("sync offers: ",
 			"iteration", cnt)
 
-		salesResponse, err := s.client.GetSales(ctx, s.afterSaleID)
+		salesResponse, err := uc.client.GetSales(ctx, uc.afterSaleID)
 		if err != nil {
-			s.logger.Error("sync offers",
+			uc.logger.Error("sync offers",
 				"error", err)
 		}
 
 		if salesResponse == nil {
-			s.logger.Warn("sync offers: sales response nil")
+			uc.logger.Warn("sync offers: sales response nil")
 			return
 		}
 
 		offers := clientResponseToOffer(*salesResponse)
 
 		if offers == nil || len(*offers) == 0 {
-			s.logger.Warn("sync offers: empty offers")
+			uc.logger.Warn("sync offers: empty offers")
 			return
 		}
 
-		err = s.repo.CreateMany(ctx, *offers)
+		err = uc.repo.CreateMany(ctx, *offers)
 		if err != nil {
-			s.logger.Error("sync offers",
+			uc.logger.Error("sync offers",
 				"error", err)
 		}
 
-		s.afterSaleID = (*offers)[len(*offers)-1].ID
+		uc.afterSaleID = (*offers)[len(*offers)-1].ID
 	}
 
 }
