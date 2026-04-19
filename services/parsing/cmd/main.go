@@ -1,14 +1,17 @@
 package main
 
 import (
-	"context"
 	"os"
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
 	"skinbaron-analyzer/pkg/logger"
 	"skinbaron-analyzer/services/parsing/internal/app"
+	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/config"
 	"skinbaron-analyzer/services/parsing/internal/usecase"
+	"time"
+
+	transportgrpc "skinbaron-analyzer/services/parsing/internal/transport/grpc"
 )
 
 func main() {
@@ -39,30 +42,21 @@ func main() {
 
 	log.Info("app successfully initialized")
 
-	// baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
-	// sales := usecase.NewGetSalesService(baronClient, repos.Offers, log)
-	// ctx := context.Background()
-	// sales.SyncOffers(ctx)
+	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
+	syncOffersUC := usecase.NewSyncOffers(baronClient, repos.Offers, log)
+	listOffersUC := usecase.NewListOfferService(repos.Offers, log)
 
-	ctx := context.Background()
-	listOffersSvc := usecase.NewListOfferService(repos.Offers, log)
-	ctx = context.Background()
-	appId := 730
-	state := 2
-	filter := usecase.ListOffersInput{
-		Limit:  100,
-		Offset: 0,
-		AppID:  &appId,
+	handler := transportgrpc.NewHandler(syncOffersUC, listOffersUC)
+	server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
 
-		State: &state,
-	}
-	listOffers, err := listOffersSvc.GetOffers(ctx, filter)
-	if err != nil {
-		log.Info("get offers",
+	log.Info("starting grpc server on: ",
+		"address", cfg.GRPCConfig.Address)
+
+	if err := server.Run(); err != nil {
+		log.Error("error when running server: ",
 			"error", err)
+		os.Exit(1)
 	}
-
-	log.Info("list offers: ", "offers", listOffers)
 }
 
 func makeDBConfigData(cfg *config.Config) *db.DBConfigData {
