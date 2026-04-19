@@ -251,7 +251,7 @@ func addFiltersToQuery(filter repository.OfferFilter, query *string, args *[]any
 	}
 
 	if filter.NameQuery != nil && *filter.NameQuery != "" {
-		(*query) += fmt.Sprintf(" AND name ILIKE = $%d", *argPos)
+		(*query) += fmt.Sprintf(" AND name ILIKE $%d", *argPos)
 		*args = append(*args, "%"+*filter.NameQuery+"%")
 		(*argPos)++
 	}

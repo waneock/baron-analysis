@@ -11,8 +11,9 @@ import (
 )
 
 type Config struct {
-	Env      string   `yaml:"env" env-required:"true"`
-	DBConfig DBConfig `yaml:"db_config"`
+	Env        string     `yaml:"env" env-required:"true"`
+	DBConfig   DBConfig   `yaml:"db_config"`
+	GRPCConfig GRPCConfig `yaml:"grpc_config"`
 }
 
 type DBConfig struct {
@@ -21,6 +22,10 @@ type DBConfig struct {
 	ConnMaxLifeTime time.Duration `yaml:"conn_max_life_time" env-default:"30m"`
 	MaxIdleConns    int           `yaml:"max_idle_conns" env-default:"10"`
 	MaxOpenConns    int           `yaml:"max_open_conns" env-default:"25"`
+}
+
+type GRPCConfig struct {
+	Address string `yaml:"address" env-default:"0.0.0.0:50051"`
 }
 
 func MustLoad() *Config {

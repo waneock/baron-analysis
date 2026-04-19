@@ -2,10 +2,17 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/domain"
 	"time"
+)
+
+var (
+	ErrClientGetSales    = fmt.Errorf("skinbaron api call error")
+	ErrBodyWithoutOffers = fmt.Errorf("skinbaron api call response: body without offers")
+	ErrInsertIntoDb      = fmt.Errorf("error when trying to insert into database")
 )
 
 type OffersClient interface {
@@ -16,15 +23,15 @@ type OffersRepo interface {
 	CreateMany(ctx context.Context, offers []domain.Offer) error
 }
 
-type GetSalesService struct {
+type SyncOffers struct {
 	client      OffersClient
 	repo        OffersRepo
 	logger      *slog.Logger
 	afterSaleID string
 }
 
-func NewGetSalesService(client OffersClient, repo OffersRepo, logger *slog.Logger) *GetSalesService {
-	return &GetSalesService{
+func NewSyncOffers(client OffersClient, repo OffersRepo, logger *slog.Logger) *SyncOffers {
+	return &SyncOffers{
 		client:      client,
 		repo:        repo,
 		logger:      logger,
@@ -32,7 +39,7 @@ func NewGetSalesService(client OffersClient, repo OffersRepo, logger *slog.Logge
 	}
 }
 
-func (uc *GetSalesService) SyncOffers(ctx context.Context) {
+func (uc *SyncOffers) Execute(ctx context.Context) error {
 	cnt := 0
 	for {
 		cnt += 1
@@ -43,29 +50,30 @@ func (uc *GetSalesService) SyncOffers(ctx context.Context) {
 		if err != nil {
 			uc.logger.Error("sync offers",
 				"error", err)
+			return ErrClientGetSales
 		}
 
 		if salesResponse == nil {
-			uc.logger.Warn("sync offers: sales response nil")
-			return
+			uc.logger.Info("sync offers: sales response nil")
+			return nil
 		}
 
 		offers := clientResponseToOffer(*salesResponse)
 
 		if offers == nil || len(*offers) == 0 {
 			uc.logger.Warn("sync offers: empty offers")
-			return
+			return ErrBodyWithoutOffers
 		}
 
 		err = uc.repo.CreateMany(ctx, *offers)
 		if err != nil {
 			uc.logger.Error("sync offers",
 				"error", err)
+			return ErrInsertIntoDb
 		}
 
 		uc.afterSaleID = (*offers)[len(*offers)-1].ID
 	}
-
 }
 
 func clientResponseToOffer(salesResponse baron.GetSalesResponse) *[]domain.Offer {

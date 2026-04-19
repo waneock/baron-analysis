@@ -53,7 +53,7 @@ func NewListOfferService(listRepo ListRepo, logger *slog.Logger) *ListOffersServ
 	}
 }
 
-func (uc *ListOffersService) GetOffers(ctx context.Context, input ListOffersInput) (*ListOfferResult, error) {
+func (uc *ListOffersService) Execute(ctx context.Context, input ListOffersInput) (*ListOfferResult, error) {
 	if input.Limit < 0 {
 		input.Limit = 0
 	}
