@@ -118,8 +118,8 @@ func (h *Handler) ListOffers(ctx context.Context, req *pb.ListOffersRequest) (*p
 func toProtoOffer(offer domain.Offer) *pb.Offer {
 	return &pb.Offer{
 		Id:               offer.ID,
-		Price:            float64(offer.Price / 100),
-		Commission:       float64(offer.Commission / 100),
+		Price:            float64(offer.Price) / 100.00,
+		Commission:       float64(offer.Commission) / 100.00,
 		Tax:              float64(offer.Tax),
 		ClassId:          offer.ClassID,
 		InstanceId:       offer.InstanceID,
@@ -132,7 +132,7 @@ func toProtoOffer(offer domain.Offer) *pb.Offer {
 		EscrowEndDate:    toProtoTime(&offer.EscrowEndDate),
 		LastUpdated:      toProtoTime(&offer.LastUpdated),
 		ListTime:         toProtoTime(&offer.ListTime),
-		Wear:             float64(offer.Wear),
+		Wear:             float64(offer.Wear) / 100.00,
 		Txid:             offer.TxID,
 		TradeLocked:      offer.TradeLocked,
 		Addons:           offer.Addons,
