@@ -2,14 +2,11 @@ package usecase
 
 import (
 	"context"
-	pb "skinbaron-analyzer/proto/parsing/v1"
-	"time"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"skinbaron-analyzer/services/reporting/internal/domain"
 )
 
 type ListOffersClient interface {
-	ListOffers(ctx context.Context, req *pb.ListOffersRequest) (*pb.ListOffersResponse, error)
+	ListOffers(ctx context.Context, input domain.ListOffersInput) (*domain.ListOffersOutput, error)
 }
 
 type ListOffers struct {
@@ -22,66 +19,26 @@ func NewListOffers(client ListOffersClient) *ListOffers {
 	}
 }
 
-type ListOffersInput struct {
-	Limit  int
-	Offset int
-
-	AppID       *int
-	State       *int
-	NameQuery   *string
-	MinPrice    *float64
-	MaxPrice    *float64
-	ListTime    *time.Time
-	LastUpdated *time.Time
-
-	SortBy    *string
-	SortOrder *string
+func (uc *ListOffers) Execute(ctx context.Context, input domain.ListOffersInput) (*domain.ListOffersOutput, error) {
+	offers, err := uc.client.ListOffers(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	for i := range offers.Items {
+		offers.Items[i].State = stringifyOfferState(offers.Items[i].State)
+	}
+	return offers, nil
 }
 
-func (uc *ListOffers) Execute(ctx context.Context, input ListOffersInput) (*pb.ListOffersResponse, error) {
-	req := &pb.ListOffersRequest{
-		Limit:  int64(input.Limit),
-		Offset: int64(input.Offset),
+func stringifyOfferState(state string) string {
+	switch state {
+	case "2":
+		return "Available"
+	case "4":
+		return "Sold"
+	case "7":
+		return "Canceled"
+	default:
+		return state
 	}
-
-	if input.AppID != nil {
-		val := int64(*input.AppID)
-		req.AppId = &val
-	}
-
-	if input.State != nil {
-		val := int64(*input.State)
-		req.State = &val
-	}
-
-	if input.NameQuery != nil {
-		req.NameQuery = input.NameQuery
-	}
-
-	if input.MinPrice != nil {
-		req.MinPrice = input.MinPrice
-	}
-
-	if input.MaxPrice != nil {
-		req.MaxPrice = input.MaxPrice
-	}
-
-	if input.ListTime != nil {
-		req.ListTime = timestamppb.New(*input.ListTime)
-	}
-
-	if input.LastUpdated != nil {
-		req.LastUpdated = timestamppb.New(*input.LastUpdated)
-	}
-
-	if input.SortBy != nil {
-		req.SortBy = input.SortBy
-	}
-
-	if input.SortOrder != nil {
-		req.SortOrder = input.SortOrder
-	}
-
-	return uc.client.ListOffers(ctx, req)
-
 }
