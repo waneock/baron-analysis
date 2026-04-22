@@ -40,6 +40,10 @@ func main() {
 		})
 	})
 
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./web/index.html")
+	})
+
 	server := http.Server{
 		Addr:    "0.0.0.0:8080",
 		Handler: r,
