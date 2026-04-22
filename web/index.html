@@ -26,7 +26,7 @@
 
     .filters {
       display: grid;
-      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
       gap: 12px;
     }
 
@@ -41,7 +41,7 @@
       font-weight: 600;
     }
 
-    input, select, button {
+    input, button {
       padding: 8px 10px;
       font-size: 14px;
     }
@@ -68,6 +68,7 @@
       gap: 16px;
       margin-bottom: 12px;
       font-size: 14px;
+      flex-wrap: wrap;
     }
 
     .status {
@@ -96,6 +97,7 @@
       text-align: left;
       font-size: 14px;
       white-space: nowrap;
+      vertical-align: top;
     }
 
     th {
@@ -109,13 +111,13 @@
       align-items: center;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 900px) {
       .filters {
         grid-template-columns: repeat(2, minmax(180px, 1fr));
       }
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 600px) {
       .filters {
         grid-template-columns: 1fr;
       }
@@ -139,11 +141,6 @@
         </div>
 
         <div class="field">
-          <label for="app_id">App ID</label>
-          <input id="app_id" name="app_id" type="number" placeholder="730" />
-        </div>
-
-        <div class="field">
           <label for="state">State</label>
           <input id="state" name="state" type="number" placeholder="2" />
         </div>
@@ -161,37 +158,6 @@
         <div class="field">
           <label for="max_price">Max price</label>
           <input id="max_price" name="max_price" type="number" step="0.01" />
-        </div>
-
-        <div class="field">
-          <label for="list_time">List time</label>
-          <input id="list_time" name="list_time" type="datetime-local" />
-        </div>
-
-        <div class="field">
-          <label for="last_updated">Last updated</label>
-          <input id="last_updated" name="last_updated" type="datetime-local" />
-        </div>
-
-        <div class="field">
-          <label for="sort_by">Sort by</label>
-          <select id="sort_by" name="sort_by">
-            <option value="">-- select --</option>
-            <option value="price">price</option>
-            <option value="name">name</option>
-            <option value="state">state</option>
-            <option value="list_time">list_time</option>
-            <option value="last_updated">last_updated</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="sort_order">Sort order</label>
-          <select id="sort_order" name="sort_order">
-            <option value="">-- select --</option>
-            <option value="asc">asc</option>
-            <option value="desc">desc</option>
-          </select>
         </div>
       </div>
 
@@ -219,18 +185,16 @@
             <th>Name</th>
             <th>Price</th>
             <th>Commission</th>
-            <th>Tax</th>
-            <th>App ID</th>
             <th>State</th>
             <th>Wear</th>
             <th>List Time</th>
             <th>Last Updated</th>
-            <th>Buyer Country</th>
+            <th>Addons</th>
           </tr>
         </thead>
         <tbody id="offers-body">
           <tr>
-            <td colspan="11">No data</td>
+            <td colspan="9">No data</td>
           </tr>
         </tbody>
       </table>
@@ -264,15 +228,6 @@
 
       for (const [key, value] of formData.entries()) {
         if (value === "") continue;
-
-        if (key === "list_time" || key === "last_updated") {
-          const d = new Date(value);
-          if (!isNaN(d.getTime())) {
-            params.set(key, d.toISOString());
-          }
-          continue;
-        }
-
         params.set(key, value);
       }
 
@@ -289,11 +244,30 @@
         .replaceAll("'", "&#039;");
     }
 
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return escapeHtml(value);
+      }
+      return escapeHtml(date.toLocaleString());
+    }
+
+    function formatAddons(addons) {
+      if (!addons || addons.length === 0) return "";
+      return addons.map(escapeHtml).join(", ");
+    }
+
+    function formatNumber(value) {
+      if (value === null || value === undefined || value === "") return "";
+      return escapeHtml(value);
+    }
+
     function renderRows(items) {
       if (!items || items.length === 0) {
         offersBody.innerHTML = `
           <tr>
-            <td colspan="11">No data</td>
+            <td colspan="9">No data</td>
           </tr>
         `;
         return;
@@ -303,15 +277,13 @@
         <tr>
           <td>${escapeHtml(item.id)}</td>
           <td>${escapeHtml(item.name)}</td>
-          <td>${escapeHtml(item.price)}</td>
-          <td>${escapeHtml(item.commission)}</td>
-          <td>${escapeHtml(item.tax)}</td>
-          <td>${escapeHtml(item.app_id)}</td>
+          <td>${formatNumber(item.price)}</td>
+          <td>${formatNumber(item.commission)}</td>
           <td>${escapeHtml(item.state)}</td>
-          <td>${escapeHtml(item.wear)}</td>
-          <td>${escapeHtml(item.list_time)}</td>
-          <td>${escapeHtml(item.last_updated)}</td>
-          <td>${escapeHtml(item.buyer_country_code)}</td>
+          <td>${formatNumber(item.wear)}</td>
+          <td>${formatDate(item.list_time)}</td>
+          <td>${formatDate(item.last_updated)}</td>
+          <td>${formatAddons(item.addons)}</td>
         </tr>
       `).join("");
     }
@@ -321,12 +293,14 @@
         setStatus("Loading...");
         offersBody.innerHTML = `
           <tr>
-            <td colspan="11">Loading...</td>
+            <td colspan="9">Loading...</td>
           </tr>
         `;
 
         const query = buildQueryString();
-        const res = await fetch(`/v1/offers/list?${query}`, {
+        const url = query ? `/v1/offers/list?${query}` : "/v1/offers/list";
+
+        const res = await fetch(url, {
           method: "GET",
           headers: {
             "Accept": "application/json"
@@ -355,10 +329,7 @@
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const offsetInput = document.getElementById("offset");
-      offsetInput.value = "0";
-
+      document.getElementById("offset").value = "0";
       await fetchOffers();
     });
 

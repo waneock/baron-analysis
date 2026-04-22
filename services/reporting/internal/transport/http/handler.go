@@ -4,12 +4,10 @@ import (
 	"context"
 	"net/http"
 	pb "skinbaron-analyzer/proto/parsing/v1"
+	"skinbaron-analyzer/services/reporting/internal/domain"
 	"skinbaron-analyzer/services/reporting/internal/transport/http/render"
-	ucsvc "skinbaron-analyzer/services/reporting/internal/usecase"
 	"strconv"
 	"time"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -31,7 +29,7 @@ type SyncOffersService interface {
 }
 
 type ListOffersService interface {
-	Execute(ctx context.Context, input ucsvc.ListOffersInput) (*pb.ListOffersResponse, error)
+	Execute(ctx context.Context, input domain.ListOffersInput) (*domain.ListOffersOutput, error)
 }
 
 type OffersHandler struct {
@@ -51,10 +49,9 @@ func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
 }
 
 type ListOffersPayload struct {
-	Limit       int        `json:"limit"`
-	Offset      int        `json:"offset"`
-	AppID       *int       `json:"app_id"`
-	State       *int       `json:"state"`
+	Limit       int64      `json:"limit"`
+	Offset      int64      `json:"offset"`
+	State       *int64     `json:"state"`
 	NameQuery   *string    `json:"name_query"`
 	MinPrice    *float64   `json:"min_price"`
 	MaxPrice    *float64   `json:"max_price"`
@@ -65,30 +62,22 @@ type ListOffersPayload struct {
 }
 
 type ListOffer struct {
-	ID               string    `json:"id"`
-	Price            float64   `json:"price"`
-	Commission       float64   `json:"commission"`
-	Tax              float64   `json:"tax"`
-	ClassID          string    `json:"class_id"`
-	InstanceID       string    `json:"instance_id"`
-	AppID            int64     `json:"app_id"`
-	ContextID        string    `json:"context_id"`
-	AssetID          string    `json:"asset_id"`
-	Name             string    `json:"name"`
-	OfferID          string    `json:"offer_id"`
-	State            int64     `json:"state"`
-	EscrowEndDate    time.Time `json:"escrow_end_date"`
-	ListTime         time.Time `json:"list_time"`
-	LastUpdated      time.Time `json:"last_updated"`
-	Wear             float64   `json:"wear"`
-	TxID             string    `json:"txid"`
-	TradeLocked      bool      `json:"trade_locked"`
-	Addons           []string  `json:"addons"`
-	BuyerCountryCode string    `json:"buyer_country_code"`
+	ID          string    `json:"id"`
+	Price       float64   `json:"price"`
+	Commission  float64   `json:"commission"`
+	Name        string    `json:"name"`
+	State       string    `json:"state"`
+	ListTime    time.Time `json:"list_time"`
+	LastUpdated time.Time `json:"last_updated"`
+	Wear        float64   `json:"wear"`
+	Addons      []string  `json:"addons"`
 }
 
 type ListOfferOutput struct {
-	Items []ListOffer `json:"items"`
+	Items  []ListOffer `json:"items"`
+	Total  int64       `json:"total"`
+	Limit  int64       `json:"limit"`
+	Offset int64       `json:"offset"`
 }
 
 func (h *OffersHandler) ListOffers(w http.ResponseWriter, r *http.Request) {
@@ -101,114 +90,35 @@ func (h *OffersHandler) ListOffers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	svcInput := listOffersPayloadToSvcInput(*payload)
 
-	offersResponse, err := h.listOffers.Execute(ctx, *svcInput)
+	offersResponse, err := h.listOffers.Execute(ctx, svcInput)
 	if err != nil {
 		render.InternalServerErr(w)
 		return
 	}
 
-	items := pbListOffersResToListOffersOut(offersResponse)
+	items := svcOutToListOffersOut(*offersResponse)
 	if err := render.OK(w, items); err != nil {
 		render.InternalServerErr(w)
 		return
 	}
 }
 
-func listOffersPayloadToSvcInput(input ListOffersPayload) *ucsvc.ListOffersInput {
-	return &ucsvc.ListOffersInput{
-		Offset:      input.Offset,
-		Limit:       input.Limit,
-		AppID:       input.AppID,
-		State:       input.State,
-		NameQuery:   input.NameQuery,
-		MinPrice:    input.MinPrice,
-		MaxPrice:    input.MaxPrice,
-		ListTime:    input.ListTime,
-		LastUpdated: input.LastUpdated,
-		SortBy:      input.SortBy,
-		SortOrder:   input.SortOrder,
-	}
-}
-
-func pbListOffersResToListOffersOut(input *pb.ListOffersResponse) *ListOfferOutput {
-	items := make([]ListOffer, 0, len(input.Items))
-	for _, item := range input.Items {
-		newOffer := ListOffer{
-			ID:               item.GetId(),
-			Price:            item.GetPrice(),
-			Commission:       item.GetCommission(),
-			Tax:              item.GetTax(),
-			ClassID:          item.GetClassId(),
-			InstanceID:       item.GetInstanceId(),
-			AppID:            item.GetAppId(),
-			ContextID:        item.GetContextId(),
-			AssetID:          item.GetAssetId(),
-			Name:             item.GetName(),
-			OfferID:          item.GetOfferId(),
-			State:            item.GetState(),
-			Wear:             item.GetWear(),
-			TxID:             item.GetTxid(),
-			TradeLocked:      item.GetTradeLocked(),
-			Addons:           item.GetAddons(),
-			BuyerCountryCode: item.GetBuyerCountryCode(),
-		}
-
-		escrowEndDate := toTime(item.GetEscrowEndDate())
-		if escrowEndDate != nil {
-			newOffer.EscrowEndDate = *escrowEndDate
-		}
-
-		listTime := toTime(item.GetListTime())
-		if listTime != nil {
-			newOffer.ListTime = *listTime
-		}
-
-		lastUpdated := toTime(item.GetLastUpdated())
-		if lastUpdated != nil {
-			newOffer.LastUpdated = *lastUpdated
-		}
-
-		items = append(items, newOffer)
-	}
-	return &ListOfferOutput{
-		Items: items,
-	}
-}
-
-func toTime(t *timestamppb.Timestamp) *time.Time {
-	if t == nil {
-		return nil
-	}
-
-	val := (*t).AsTime()
-	return &val
-}
-
 func parseListOffersQuery(r *http.Request) (*ListOffersPayload, error) {
 	q := r.URL.Query()
 
-	limit, err := strconv.Atoi(q.Get(paramLimit))
+	limit, err := strconv.ParseInt(q.Get(paramLimit), 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	offset, err := strconv.Atoi(q.Get(paramOffset))
+	offset, err := strconv.ParseInt(q.Get(paramOffset), 10, 64)
 	if err != nil {
 		return nil, err
 	}
 
-	var appID *int
-	if raw := q.Get(paramAppID); raw != "" {
-		val, err := strconv.Atoi(raw)
-		if err != nil {
-			return nil, err
-		}
-		appID = &val
-	}
-
-	var state *int
+	var state *int64
 	if raw := q.Get(paramState); raw != "" {
-		val, err := strconv.Atoi(raw)
+		val, err := strconv.ParseInt(raw, 10, 64)
 		if err != nil {
 			return nil, err
 		}
@@ -243,7 +153,6 @@ func parseListOffersQuery(r *http.Request) (*ListOffersPayload, error) {
 	return &ListOffersPayload{
 		Limit:       limit,
 		Offset:      offset,
-		AppID:       appID,
 		State:       state,
 		NameQuery:   nameQuery,
 		MinPrice:    minPrice,
@@ -253,5 +162,47 @@ func parseListOffersQuery(r *http.Request) (*ListOffersPayload, error) {
 		SortBy:      nil,
 		SortOrder:   nil,
 	}, nil
+}
 
+func listOffersPayloadToSvcInput(input ListOffersPayload) domain.ListOffersInput {
+	return domain.ListOffersInput{
+		Limit:       input.Limit,
+		Offset:      input.Offset,
+		AppID:       nil, // this value is constant and set inside client
+		State:       input.State,
+		NameQuery:   input.NameQuery,
+		MinPrice:    input.MinPrice,
+		MaxPrice:    input.MaxPrice,
+		ListTime:    input.ListTime,
+		LastUpdated: input.LastUpdated,
+		SortBy:      input.SortBy,
+		SortOrder:   input.SortOrder,
+	}
+}
+
+func svcOutToListOffersOut(input domain.ListOffersOutput) *ListOfferOutput {
+	items := make([]ListOffer, 0, len(input.Items))
+
+	for _, item := range input.Items {
+		newOffer := ListOffer{
+			ID:          item.ID,
+			Price:       item.Price,
+			Commission:  item.Commission,
+			Name:        item.Name,
+			State:       item.State,
+			ListTime:    item.ListTime,
+			LastUpdated: item.LastUpdated,
+			Wear:        item.Wear,
+			Addons:      item.Addons,
+		}
+
+		items = append(items, newOffer)
+	}
+
+	return &ListOfferOutput{
+		Items:  items,
+		Total:  input.Total,
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	}
 }
