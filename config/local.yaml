@@ -1,9 +1,14 @@
 env: "local"
+
 db_config:
   conn_timeout: "5s"
   conn_max_idle_time: "5m"
   conn_max_life_time: "30m"
   max_idle_conns: 10
   max_open_conns: 25
+
 grpc_config:
   address: "0.0.0.0:50051"
+
+json_data:
+  items_path: /data/skins.json

@@ -32,6 +32,16 @@ type OffersRepository interface {
 	Count(ctx context.Context, filter OfferFilter) (int64, error)
 }
 
+type ItemsRepository interface {
+	CreateMany(ctx context.Context, items []domain.ItemRow) error
+}
+
+type ItemWearsRepository interface {
+	CreateMany(ctx context.Context, wears []domain.ItemWearRow) error
+}
+
 type Repo struct {
-	OffersRepository OffersRepository
+	OffersRepository    OffersRepository
+	ItemsRepository     ItemsRepository
+	ItemWearsRepository ItemWearsRepository
 }
