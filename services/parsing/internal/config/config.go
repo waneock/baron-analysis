@@ -14,6 +14,7 @@ type Config struct {
 	Env        string     `yaml:"env" env-required:"true"`
 	DBConfig   DBConfig   `yaml:"db_config"`
 	GRPCConfig GRPCConfig `yaml:"grpc_config"`
+	JSONData   JSONData   `yaml:"json_data"`
 }
 
 type DBConfig struct {
@@ -26,6 +27,10 @@ type DBConfig struct {
 
 type GRPCConfig struct {
 	Address string `yaml:"address" env-default:"0.0.0.0:50051"`
+}
+
+type JSONData struct {
+	ItemPath string `yaml:"items_path"`
 }
 
 func MustLoad() *Config {

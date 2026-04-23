@@ -10,6 +10,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./services/parsing/cmd
 FROM gcr.io/distroless/base-debian12
 WORKDIR /
 COPY --from=build /server /server
+COPY --from=build /app/services/parsing/data /data
 EXPOSE 8080
 USER nonroot:nonroot
 ENTRYPOINT ["/server"]

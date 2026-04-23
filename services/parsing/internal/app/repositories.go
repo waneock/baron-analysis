@@ -7,11 +7,15 @@ import (
 )
 
 type Repositories struct {
-	Offers repository.OffersRepository
+	Offers    repository.OffersRepository
+	Items     repository.ItemsRepository
+	ItemWears repository.ItemWearsRepository
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
 	return &Repositories{
-		Offers: postgres.NewOffersRepo(db),
+		Offers:    postgres.NewOffersRepo(db),
+		Items:     postgres.NewItemsRepo(db),
+		ItemWears: postgres.NewItemWearsRepo(db),
 	}
 }
