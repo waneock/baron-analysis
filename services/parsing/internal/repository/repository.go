@@ -40,8 +40,19 @@ type ItemWearsRepository interface {
 	CreateMany(ctx context.Context, wears []domain.ItemWearRow) error
 }
 
+type MarketSyncSourceRepository interface {
+	Count(ctx context.Context) (int, error)
+	List(ctx context.Context, limit, offset int) (*[]domain.ItemWearSource, error)
+}
+
+type ItemWearSaleRepository interface {
+	CreateMany(ctx context.Context, items []domain.ItemWearSale) error
+}
+
 type Repo struct {
-	OffersRepository    OffersRepository
-	ItemsRepository     ItemsRepository
-	ItemWearsRepository ItemWearsRepository
+	OffersRepository           OffersRepository
+	ItemsRepository            ItemsRepository
+	ItemWearsRepository        ItemWearsRepository
+	MarketSyncSourceRepository MarketSyncSourceRepository
+	ItemWearSaleRepository     ItemWearSaleRepository
 }
