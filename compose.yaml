@@ -7,6 +7,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -18,7 +20,7 @@ services:
       context: .
       dockerfile: services/parsing/Dockerfile
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       API_KEY: ${API_KEY}
       CONFIG_PATH: ${CONFIG_PATH}
     volumes:
@@ -32,5 +34,7 @@ services:
       context: .
       dockerfile: services/reporting/Dockerfile
     ports:
-    - "8080:8080"
-      
+      - "8080:8080"
+
+volumes:
+  postgres_data:
