@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	QueryRequestTimeout = 5 * time.Second
+	QueryRequestTimeout = 15 * time.Second
 )
 
 type OfferFilter struct {

@@ -61,7 +61,7 @@ func (uc *SyncItemPrices) Execute(ctx context.Context) error {
 		return ErrCountItems
 	}
 
-	for i := 0; i < total; i += limitDefaultValue {
+	for i := 8584; i < total; i += limitDefaultValue {
 		uc.log.Info("sync item prices",
 			"index", i,
 			"total", total)
@@ -79,7 +79,7 @@ func (uc *SyncItemPrices) Execute(ctx context.Context) error {
 			return ErrListItems
 		}
 
-		for _, item := range *items {
+		for j, item := range *items {
 			itemName := fmt.Sprintf("%s (%s)", item.Name, item.Wear)
 			newestSales, err := uc.baronClient.GetNewestSales(ctx, itemName)
 			if err != nil {
@@ -90,7 +90,8 @@ func (uc *SyncItemPrices) Execute(ctx context.Context) error {
 
 			itemWearSales := newestSalesOutToItemWearSale(newestSales, item.WearID)
 
-			fmt.Println("items:", itemWearSales)
+			fmt.Println("item index: ", i+j)
+			// fmt.Println("items:", itemWearSales)
 
 			err = uc.itemWearSalesRepo.CreateMany(ctx, itemWearSales)
 			if err != nil {
