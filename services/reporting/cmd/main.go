@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"skinbaron-analyzer/pkg/db"
@@ -10,6 +11,7 @@ import (
 	"skinbaron-analyzer/pkg/logger"
 	"skinbaron-analyzer/services/reporting/internal/client/parsinggrpc"
 	"skinbaron-analyzer/services/reporting/internal/config"
+	"skinbaron-analyzer/services/reporting/internal/repository"
 	httphndl "skinbaron-analyzer/services/reporting/internal/transport/http"
 	"skinbaron-analyzer/services/reporting/internal/usecase"
 	"time"
@@ -20,6 +22,10 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
+
+	if cfg == nil {
+		log.Fatal("config is nil")
+	}
 
 	// logger
 	log := logger.MustLoad(cfg.Env)
@@ -35,6 +41,12 @@ func main() {
 	}
 
 	defer db.Close()
+
+	repo := repository.New(db)
+	if repo == nil {
+		log.Error("cannot create a repository")
+		os.Exit(1)
+	}
 
 	parsingClient, err := parsinggrpc.New("parsing:50051")
 	if err != nil {
