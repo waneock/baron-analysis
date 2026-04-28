@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
+	"skinbaron-analyzer/pkg/logger"
 	"skinbaron-analyzer/services/reporting/internal/client/parsinggrpc"
 	"skinbaron-analyzer/services/reporting/internal/config"
 	httphndl "skinbaron-analyzer/services/reporting/internal/transport/http"
@@ -20,10 +21,28 @@ import (
 func main() {
 	cfg := config.MustLoad()
 
+	// logger
+	log := logger.MustLoad(cfg.Env)
+
+	// database
+	dbCfg := makeDBConfigData(cfg)
+
+	db, err := db.New(*dbCfg)
+	if err != nil {
+		log.Error("error when trying to create a new database",
+			"error", err)
+		os.Exit(1)
+	}
+
+	defer db.Close()
+
 	parsingClient, err := parsinggrpc.New("parsing:50051")
 	if err != nil {
-		log.Fatal("cannot create parsing client: ", err)
+		log.Error("cannot create parsing client",
+			"error", err)
+		os.Exit(1)
 	}
+
 	listOffersUC := usecase.NewListOffers(parsingClient)
 	syncOffersUC := usecase.NewSyncOffers(parsingClient)
 
@@ -56,8 +75,10 @@ func main() {
 
 	fmt.Println("run server on: ", server.Addr)
 
-	if err = server.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
-		log.Fatal("server stopped", "err", err)
+	if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Error("server stopped",
+			"error", err)
+		os.Exit(1)
 	}
 }
 
