@@ -55,6 +55,64 @@ func (j *JobsRepo) Create(ctx context.Context, job domain.SyncJob) error {
 }
 
 func (j *JobsRepo) GetByID(ctx context.Context, id string) (*domain.SyncJob, error) {
+	return j.fetchByID(ctx, id)
+}
+
+func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
+	job, err := j.fetchByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	job.Status = domain.SyncJobStatusFailed
+	job.Message = msg
+
+	query := `
+		UPDATE
+			sync_jobs
+		SET
+			id,
+			job_type,
+			status,
+			message,
+			started_at,
+			finished_at,
+			created_at,
+			updated_at
+		) VALUES (
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6,
+			$7,
+			now()
+		);
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	_, err = j.db.ExecContext(
+		ctx,
+		query,
+		job.ID,
+		job.JobType,
+		job.Message,
+		job.StartedAt,
+		job.FinishedAt,
+		job.CreatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (j *JobsRepo) fetchByID(ctx context.Context, id string) (*domain.SyncJob, error) {
 	query := `
 		SELECT
 			id,

@@ -34,10 +34,6 @@ func (c *Client) Close() error {
 	return c.conn.Close()
 }
 
-func (c *Client) SyncOffers(ctx context.Context) (*pb.SyncOffersResponse, error) {
-	return c.client.SyncOffers(ctx, &pb.SyncOffersRequest{})
-}
-
 func (c *Client) ListOffers(ctx context.Context, input domain.ListOffersInput) (*domain.ListOffersOutput, error) {
 	pbListOffersRequest := listOffersInputToPbRequest(input)
 
