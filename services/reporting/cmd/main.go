@@ -11,6 +11,7 @@ import (
 	"skinbaron-analyzer/pkg/logger"
 	"skinbaron-analyzer/services/reporting/internal/client/parsinggrpc"
 	"skinbaron-analyzer/services/reporting/internal/config"
+	"skinbaron-analyzer/services/reporting/internal/producer/kafka"
 	"skinbaron-analyzer/services/reporting/internal/repository"
 	httphndl "skinbaron-analyzer/services/reporting/internal/transport/http"
 	"skinbaron-analyzer/services/reporting/internal/usecase"
@@ -18,6 +19,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	kafkago "github.com/segmentio/kafka-go"
 )
 
 func main() {
@@ -47,6 +50,14 @@ func main() {
 		log.Error("cannot create a repository")
 		os.Exit(1)
 	}
+
+	writer := &kafkago.Writer{
+		Addr:     kafkago.TCP("kafka:9092"),
+		Balancer: &kafkago.LeastBytes{},
+	}
+
+	jobsProducer := kafka.NewProducer(writer)
+	defer writer.Close()
 
 	parsingClient, err := parsinggrpc.New("parsing:50051")
 	if err != nil {
