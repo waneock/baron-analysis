@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"skinbaron-analyzer/pkg/db"
+	"skinbaron-analyzer/pkg/env"
 	"skinbaron-analyzer/services/reporting/internal/client/parsinggrpc"
+	"skinbaron-analyzer/services/reporting/internal/config"
 	httphndl "skinbaron-analyzer/services/reporting/internal/transport/http"
 	"skinbaron-analyzer/services/reporting/internal/usecase"
 	"time"
@@ -15,6 +18,8 @@ import (
 )
 
 func main() {
+	cfg := config.MustLoad()
+
 	parsingClient, err := parsinggrpc.New("parsing:50051")
 	if err != nil {
 		log.Fatal("cannot create parsing client: ", err)
@@ -53,5 +58,16 @@ func main() {
 
 	if err = server.ListenAndServe(); err != nil && errors.Is(err, http.ErrServerClosed) {
 		log.Fatal("server stopped", "err", err)
+	}
+}
+
+func makeDBConfigData(cfg *config.Config) *db.DBConfigData {
+	return &db.DBConfigData{
+		ConnUrl:         env.GetDBUrl(),
+		ConnTimeout:     cfg.DBConfig.ConnTimeout,
+		ConnMaxIdleTime: cfg.DBConfig.ConnMaxIdleTime,
+		ConnMaxLifeTime: cfg.DBConfig.ConnMaxLifeTime,
+		MaxIdleConns:    cfg.DBConfig.MaxIdleConns,
+		MaxOpenConns:    cfg.DBConfig.MaxOpenConns,
 	}
 }
