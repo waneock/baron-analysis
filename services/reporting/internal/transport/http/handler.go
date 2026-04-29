@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"net/http"
-	pb "skinbaron-analyzer/proto/parsing/v1"
 	"skinbaron-analyzer/services/reporting/internal/domain"
 	"skinbaron-analyzer/services/reporting/internal/transport/http/render"
 	"strconv"
@@ -25,7 +24,7 @@ const (
 )
 
 type SyncOffersService interface {
-	Execute(ctx context.Context) (*pb.SyncOffersResponse, error)
+	Execute(ctx context.Context, jobType domain.SyncJobType) (string, error)
 }
 
 type ListOffersService interface {
@@ -44,8 +43,24 @@ func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService
 	}
 }
 
-func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
+type SyncOffersOutput struct {
+	JobID string `json:"job_id"`
+}
 
+func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	jobID, err := h.syncOffers.Execute(ctx, domain.SyncJobTypeSyncOffers)
+	if err != nil {
+		render.InternalServerErr(w)
+		return
+	}
+
+	var syncOffersOutput SyncOffersOutput
+	syncOffersOutput.JobID = jobID
+	if err := render.OK(w, syncOffersOutput); err != nil {
+		render.InternalServerErr(w)
+		return
+	}
 }
 
 type ListOffersPayload struct {

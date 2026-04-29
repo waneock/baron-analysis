@@ -67,7 +67,7 @@ func main() {
 	}
 
 	listOffersUC := usecase.NewListOffers(parsingClient)
-	syncOffersUC := usecase.NewSyncOffers(parsingClient)
+	syncOffersUC := usecase.NewSyncOffers(repo.JobsRepo, jobsProducer)
 
 	httpHandler := httphndl.NewOffersHandler(syncOffersUC, listOffersUC)
 

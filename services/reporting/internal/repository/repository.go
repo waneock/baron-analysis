@@ -15,6 +15,7 @@ const (
 type JobsRepository interface {
 	Create(ctx context.Context, job domain.SyncJob) error
 	GetByID(ctx context.Context, id string) (*domain.SyncJob, error)
+	MarkFailed(ctx context.Context, id, msg string) error
 }
 
 type Repository struct {

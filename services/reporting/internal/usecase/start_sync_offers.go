@@ -17,7 +17,7 @@ type SyncJobsRepository interface {
 }
 
 type SyncJobsProducer interface {
-	PublishJobRequested(ctx context.Context, jobID, jobType string) error
+	PublishJobRequested(ctx context.Context, jobID string, jobType domain.SyncJobType) error
 }
 
 type StartSyncJob struct {
@@ -32,7 +32,7 @@ func NewSyncOffers(repo SyncJobsRepository, producer SyncJobsProducer) *StartSyn
 	}
 }
 
-func (uc *StartSyncJob) Execute(ctx context.Context, jobType string) (string, error) {
+func (uc *StartSyncJob) Execute(ctx context.Context, jobType domain.SyncJobType) (string, error) {
 	jobID := uuid.NewString()
 
 	job := domain.SyncJob{

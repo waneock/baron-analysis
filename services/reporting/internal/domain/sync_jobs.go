@@ -11,9 +11,16 @@ const (
 	SyncJobStatusFailed  SyncJobStatus = "failed"
 )
 
+type SyncJobType string
+
+const (
+	SyncJobTypeSyncOffers    SyncJobType = "sync_offers"
+	SyncJobTypeSyncItemSales SyncJobType = "sync_item_sales"
+)
+
 type SyncJob struct {
 	ID         string
-	JobType    string
+	JobType    SyncJobType
 	Status     SyncJobStatus
 	Message    string
 	StartedAt  time.Time
