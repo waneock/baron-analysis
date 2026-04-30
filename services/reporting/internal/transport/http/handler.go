@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"net/http"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/reporting/internal/domain"
 	"skinbaron-analyzer/services/reporting/internal/transport/http/render"
 	"strconv"
@@ -24,7 +25,7 @@ const (
 )
 
 type SyncOffersService interface {
-	Execute(ctx context.Context, jobType domain.SyncJobType) (string, error)
+	Execute(ctx context.Context, jobType jobs.SyncJobType) (string, error)
 }
 
 type ListOffersService interface {
@@ -49,7 +50,7 @@ type SyncOffersOutput struct {
 
 func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	jobID, err := h.syncOffers.Execute(ctx, domain.SyncJobTypeSyncOffers)
+	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncOffers)
 	if err != nil {
 		render.InternalServerErr(w)
 		return

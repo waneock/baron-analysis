@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"skinbaron-analyzer/services/reporting/internal/domain"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"time"
 )
 
@@ -17,7 +17,7 @@ func NewJobsRepo(db *sql.DB) *JobsRepo {
 	}
 }
 
-func (j *JobsRepo) Create(ctx context.Context, job domain.SyncJob) error {
+func (j *JobsRepo) Create(ctx context.Context, job jobs.SyncJob) error {
 	query := `
 			INSERT INTO sync_jobs (
 				id,
@@ -54,7 +54,7 @@ func (j *JobsRepo) Create(ctx context.Context, job domain.SyncJob) error {
 	return err
 }
 
-func (j *JobsRepo) GetByID(ctx context.Context, id string) (*domain.SyncJob, error) {
+func (j *JobsRepo) GetByID(ctx context.Context, id string) (*jobs.SyncJob, error) {
 	return j.fetchByID(ctx, id)
 }
 
@@ -64,7 +64,7 @@ func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
 		return err
 	}
 
-	job.Status = domain.SyncJobStatusFailed
+	job.Status = jobs.SyncJobStatusFailed
 	job.Message = msg
 
 	query := `
@@ -112,7 +112,7 @@ func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
 	return nil
 }
 
-func (j *JobsRepo) fetchByID(ctx context.Context, id string) (*domain.SyncJob, error) {
+func (j *JobsRepo) fetchByID(ctx context.Context, id string) (*jobs.SyncJob, error) {
 	query := `
 		SELECT
 			id,
@@ -129,7 +129,7 @@ func (j *JobsRepo) fetchByID(ctx context.Context, id string) (*domain.SyncJob, e
 			id = $1
 	`
 
-	var job domain.SyncJob
+	var job jobs.SyncJob
 
 	err := j.db.QueryRowContext(
 		ctx,

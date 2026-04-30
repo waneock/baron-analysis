@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"skinbaron-analyzer/services/reporting/internal/domain"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 
 	kafkago "github.com/segmentio/kafka-go"
 )
@@ -23,7 +23,7 @@ func NewProducer(writer *kafkago.Writer) *Producer {
 	}
 }
 
-func (p *Producer) PublishJobRequested(ctx context.Context, jobID string, jobType domain.SyncJobType) error {
+func (p *Producer) PublishJobRequested(ctx context.Context, jobID string, jobType jobs.SyncJobType) error {
 	msg := SyncJobRequested{
 		JobID:   jobID,
 		JobType: string(jobType),

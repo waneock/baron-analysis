@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"skinbaron-analyzer/services/reporting/internal/domain"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 
 	"github.com/google/uuid"
 )
@@ -12,12 +12,12 @@ const (
 )
 
 type SyncJobsRepository interface {
-	Create(ctx context.Context, job domain.SyncJob) error
+	Create(ctx context.Context, job jobs.SyncJob) error
 	MarkFailed(ctx context.Context, jobID, msg string) error
 }
 
 type SyncJobsProducer interface {
-	PublishJobRequested(ctx context.Context, jobID string, jobType domain.SyncJobType) error
+	PublishJobRequested(ctx context.Context, jobID string, jobType jobs.SyncJobType) error
 }
 
 type StartSyncJob struct {
@@ -32,13 +32,13 @@ func NewSyncOffers(repo SyncJobsRepository, producer SyncJobsProducer) *StartSyn
 	}
 }
 
-func (uc *StartSyncJob) Execute(ctx context.Context, jobType domain.SyncJobType) (string, error) {
+func (uc *StartSyncJob) Execute(ctx context.Context, jobType jobs.SyncJobType) (string, error) {
 	jobID := uuid.NewString()
 
-	job := domain.SyncJob{
+	job := jobs.SyncJob{
 		ID:      jobID,
 		JobType: jobType,
-		Status:  domain.SyncJobStatusPending,
+		Status:  jobs.SyncJobStatusPending,
 	}
 
 	if err := uc.repo.Create(ctx, job); err != nil {

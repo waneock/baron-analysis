@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"skinbaron-analyzer/services/reporting/internal/domain"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/reporting/internal/repository/postgres"
 	"time"
 )
@@ -13,8 +13,8 @@ const (
 )
 
 type JobsRepository interface {
-	Create(ctx context.Context, job domain.SyncJob) error
-	GetByID(ctx context.Context, id string) (*domain.SyncJob, error)
+	Create(ctx context.Context, job jobs.SyncJob) error
+	GetByID(ctx context.Context, id string) (*jobs.SyncJob, error)
 	MarkFailed(ctx context.Context, id, msg string) error
 }
 
