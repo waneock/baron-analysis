@@ -39,7 +39,7 @@ func NewSyncOffers(client OffersClient, repo OffersRepo, logger *slog.Logger) *S
 	}
 }
 
-func (uc *SyncOffers) Execute(ctx context.Context) error {
+func (uc *SyncOffers) Execute(ctx context.Context, jobID string) error {
 	cnt := 0
 	for {
 		cnt += 1

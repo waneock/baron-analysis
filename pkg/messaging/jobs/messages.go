@@ -28,3 +28,8 @@ type SyncJob struct {
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
+
+type SyncJobRequested struct {
+	ID      string
+	JobType SyncJobType
+}

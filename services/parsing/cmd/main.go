@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"skinbaron-analyzer/pkg/db"
 	"skinbaron-analyzer/pkg/env"
@@ -8,10 +9,11 @@ import (
 	"skinbaron-analyzer/services/parsing/internal/app"
 	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/config"
+	"skinbaron-analyzer/services/parsing/internal/consumer/kafka"
 	"skinbaron-analyzer/services/parsing/internal/usecase"
 	"time"
 
-	transportgrpc "skinbaron-analyzer/services/parsing/internal/transport/grpc"
+	kafkago "github.com/segmentio/kafka-go"
 )
 
 func main() {
@@ -42,21 +44,55 @@ func main() {
 
 	log.Info("app successfully initialized")
 
-	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 5*time.Second)
+	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 30*time.Second)
+
+	// syncItemPrices := usecase.NewSyncItemPrices(
+	// 	repos.Items,
+	// 	repos.MarketSyncSource,
+	// 	repos.ItemWearSale,
+	// 	baronClient,
+	// 	log,
+	// )
+
+	// ctx := context.Background()
+	// err = syncItemPrices.Execute(ctx)
+	// if err != nil {
+	// 	log.Error("error happens during sync items",
+	// 		"err", err)
+	// }
+
 	syncOffersUC := usecase.NewSyncOffers(baronClient, repos.Offers, log)
-	listOffersUC := usecase.NewListOfferService(repos.Offers, log)
+	// ctx := context.Background()
+	// syncOffersUC.Execute(ctx)
 
-	handler := transportgrpc.NewHandler(syncOffersUC, listOffersUC)
-	server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
+	reader := kafkago.NewReader(kafkago.ReaderConfig{
+		Brokers: []string{"kafka:29092"},
+		Topic:   "sync.jobs.requested",
+		GroupID: "parsing-sync-workers",
+	})
 
-	log.Info("starting grpc server on: ",
-		"address", cfg.GRPCConfig.Address)
+	jobsHandler := kafka.NewJobsEventHandler(syncOffersUC)
+	consumer := kafka.NewConsumer(reader, jobsHandler, log)
 
-	if err := server.Run(); err != nil {
-		log.Error("error when running server: ",
-			"error", err)
-		os.Exit(1)
-	}
+	go func() {
+		if err := consumer.Run(context.Background()); err != nil {
+			log.Error("kafka consumer stopped", "error", err)
+		}
+	}()
+
+	// listOffersUC := usecase.NewListOfferService(repos.Offers, log)
+
+	// handler := transportgrpc.NewHandler(syncOffersUC, listOffersUC)
+	// server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
+
+	// log.Info("starting grpc server on: ",
+	// 	"address", cfg.GRPCConfig.Address)
+
+	// if err := server.Run(); err != nil {
+	// 	log.Error("error when running server: ",
+	// 		"error", err)
+	// 	os.Exit(1)
+	// }
 }
 
 func makeDBConfigData(cfg *config.Config) *db.DBConfigData {
