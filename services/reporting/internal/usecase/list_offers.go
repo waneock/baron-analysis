@@ -32,6 +32,8 @@ func (uc *ListOffers) Execute(ctx context.Context, input domain.ListOffersInput)
 
 func stringifyOfferState(state string) string {
 	switch state {
+	case "1":
+		return "Trade Protected"
 	case "2":
 		return "Available"
 	case "4":

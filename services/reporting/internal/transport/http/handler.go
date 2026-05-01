@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/reporting/internal/domain"
@@ -35,12 +36,14 @@ type ListOffersService interface {
 type OffersHandler struct {
 	syncOffers SyncOffersService
 	listOffers ListOffersService
+	logger     *slog.Logger
 }
 
-func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService) *OffersHandler {
+func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService, logger *slog.Logger) *OffersHandler {
 	return &OffersHandler{
 		syncOffers: syncOffers,
 		listOffers: listOffers,
+		logger:     logger,
 	}
 }
 
@@ -52,6 +55,8 @@ func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncOffers)
 	if err != nil {
+		h.logger.Error("sync offers execute",
+			"error", err)
 		render.InternalServerErr(w)
 		return
 	}
@@ -59,6 +64,8 @@ func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
 	var syncOffersOutput SyncOffersOutput
 	syncOffersOutput.JobID = jobID
 	if err := render.OK(w, syncOffersOutput); err != nil {
+		h.logger.Error("sync offers rendering response",
+			"error", err)
 		render.InternalServerErr(w)
 		return
 	}

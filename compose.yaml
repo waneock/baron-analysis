@@ -63,6 +63,8 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
       KAFKA_BROKERS: kafka:29092
+    volumes:
+      - ./config/local.yaml:/config/config.yaml:ro
     ports:
       - "8080:8080"
     depends_on:

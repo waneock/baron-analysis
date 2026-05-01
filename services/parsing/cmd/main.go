@@ -10,6 +10,7 @@ import (
 	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/config"
 	"skinbaron-analyzer/services/parsing/internal/consumer/kafka"
+	transportgrpc "skinbaron-analyzer/services/parsing/internal/transport/grpc"
 	"skinbaron-analyzer/services/parsing/internal/usecase"
 	"time"
 
@@ -80,19 +81,19 @@ func main() {
 		}
 	}()
 
-	// listOffersUC := usecase.NewListOfferService(repos.Offers, log)
+	listOffersUC := usecase.NewListOfferService(repos.Offers, log)
 
-	// handler := transportgrpc.NewHandler(syncOffersUC, listOffersUC)
-	// server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
+	handler := transportgrpc.NewHandler(listOffersUC)
+	server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
 
-	// log.Info("starting grpc server on: ",
-	// 	"address", cfg.GRPCConfig.Address)
+	log.Info("starting grpc server on: ",
+		"address", cfg.GRPCConfig.Address)
 
-	// if err := server.Run(); err != nil {
-	// 	log.Error("error when running server: ",
-	// 		"error", err)
-	// 	os.Exit(1)
-	// }
+	if err := server.Run(); err != nil {
+		log.Error("error when running server: ",
+			"error", err)
+		os.Exit(1)
+	}
 }
 
 func makeDBConfigData(cfg *config.Config) *db.DBConfigData {

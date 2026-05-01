@@ -21,6 +21,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 
 	kafkago "github.com/segmentio/kafka-go"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func main() {
@@ -38,7 +40,7 @@ func main() {
 
 	db, err := db.New(*dbCfg)
 	if err != nil {
-		log.Error("error when trying to create a new database",
+		log.Error("error when trying to connect to a database",
 			"error", err)
 		os.Exit(1)
 	}
@@ -69,7 +71,7 @@ func main() {
 	listOffersUC := usecase.NewListOffers(parsingClient)
 	syncOffersUC := usecase.NewSyncOffers(repo.JobsRepo, jobsProducer)
 
-	httpHandler := httphndl.NewOffersHandler(syncOffersUC, listOffersUC)
+	httpHandler := httphndl.NewOffersHandler(syncOffersUC, listOffersUC, log)
 
 	r := chi.NewRouter()
 
