@@ -4,68 +4,30 @@ import (
 	"context"
 	"database/sql"
 	"skinbaron-analyzer/pkg/messaging/jobs"
+	"skinbaron-analyzer/services/parsing/internal/repository"
 	"time"
 )
 
-type JobsRepo struct {
+type JobRepo struct {
 	db *sql.DB
 }
 
-func NewJobsRepo(db *sql.DB) *JobsRepo {
-	return &JobsRepo{
+func NewJobRepo(db *sql.DB) *JobRepo {
+	return &JobRepo{
 		db: db,
 	}
 }
 
-func (j *JobsRepo) Create(ctx context.Context, job jobs.SyncJob) error {
-	query := `
-			INSERT INTO sync_jobs (
-				id,
-				job_type,
-				status,
-				message,
-				started_at,
-				finished_at,
-				created_at,
-				updated_at
-			) VALUES (
-				$1,
-				$2,
-				$3,
-				$4,
-				NULL,
-				NULL,
-				now(),
-				now()
-			);
-		`
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second) // TODO replace with a constant
+func (j *JobRepo) UpdateStatus(ctx context.Context, id string, status jobs.SyncJobStatus) error {
+	ctx, cancel := context.WithTimeout(ctx, repository.QueryRequestTimeout)
 	defer cancel()
 
-	_, err := j.db.ExecContext(
-		ctx,
-		query,
-		job.ID,
-		job.JobType,
-		job.Status,
-		job.Message,
-	)
-
-	return err
-}
-
-func (j *JobsRepo) GetByID(ctx context.Context, id string) (*jobs.SyncJob, error) {
-	return j.fetchByID(ctx, id)
-}
-
-func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
 	job, err := j.fetchByID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	job.Status = jobs.SyncJobStatusFailed
-	job.Message = msg
+	job.Status = status
 
 	query := `
 		UPDATE
@@ -91,7 +53,7 @@ func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
 		);
 	`
 
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	_, err = j.db.ExecContext(
@@ -113,7 +75,7 @@ func (j *JobsRepo) MarkFailed(ctx context.Context, id, msg string) error {
 	return nil
 }
 
-func (j *JobsRepo) fetchByID(ctx context.Context, id string) (*jobs.SyncJob, error) {
+func (j *JobRepo) fetchByID(ctx context.Context, id string) (*jobs.SyncJob, error) {
 	query := `
 		SELECT
 			id,

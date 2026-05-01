@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/parsing/internal/domain"
 	"time"
 )
@@ -49,10 +50,15 @@ type ItemWearSaleRepository interface {
 	CreateMany(ctx context.Context, items []domain.ItemWearSale) error
 }
 
+type JobRepository interface {
+	UpdateStatus(ctx context.Context, id string, status jobs.SyncJobStatus) error
+}
+
 type Repo struct {
 	OffersRepository           OffersRepository
 	ItemsRepository            ItemsRepository
 	ItemWearsRepository        ItemWearsRepository
 	MarketSyncSourceRepository MarketSyncSourceRepository
 	ItemWearSaleRepository     ItemWearSaleRepository
+	JobRepository              JobRepository
 }

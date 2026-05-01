@@ -6,7 +6,7 @@ import (
 )
 
 type SyncOffersRunner interface {
-	Execute(ctx context.Context, jobID string) error
+	Execute(ctx context.Context, jobID string)
 }
 
 type JobEventHandler struct {
@@ -19,11 +19,9 @@ func NewJobsEventHandler(syncOffers SyncOffersRunner) *JobEventHandler {
 	}
 }
 
-func (h *JobEventHandler) Handle(ctx context.Context, event jobs.SyncJobRequested) error {
+func (h *JobEventHandler) Handle(ctx context.Context, event jobs.SyncJobRequested) {
 	switch event.JobType {
 	case "sync_offers":
-		return h.syncOffers.Execute(ctx, event.ID)
-	default:
-		return nil
+		h.syncOffers.Execute(ctx, event.ID)
 	}
 }

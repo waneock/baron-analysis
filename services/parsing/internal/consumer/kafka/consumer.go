@@ -15,7 +15,7 @@ type SyncJobRequested struct {
 }
 
 type JobsHandler interface {
-	Handle(ctx context.Context, event jobs.SyncJobRequested) error
+	Handle(ctx context.Context, event jobs.SyncJobRequested)
 }
 
 type Consumer struct {
@@ -56,11 +56,7 @@ func (c *Consumer) Run(ctx context.Context) error {
 
 		handlerEvent := syncJobRequestedToHandlerIn(event)
 
-		if err := c.handler.Handle(ctx, handlerEvent); err != nil {
-			c.logger.Error("handle kafka message",
-				"error", err)
-			continue
-		}
+		c.handler.Handle(ctx, handlerEvent)
 	}
 }
 

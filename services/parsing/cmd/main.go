@@ -61,7 +61,7 @@ func main() {
 	// 		"err", err)
 	// }
 
-	syncOffersUC := usecase.NewSyncOffers(baronClient, repos.Offers, log)
+	syncOffersUC := usecase.NewSyncOffers(baronClient, repos.Offers, repos.Jobs, log)
 	// ctx := context.Background()
 	// syncOffersUC.Execute(ctx)
 
