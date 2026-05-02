@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/parsing/internal/client/baron"
 	"skinbaron-analyzer/services/parsing/internal/domain"
 	"time"
@@ -23,23 +24,41 @@ type OffersRepo interface {
 	CreateMany(ctx context.Context, offers []domain.Offer) error
 }
 
+type JobsRepo interface {
+	UpdateStatus(ctx context.Context, id string, status jobs.SyncJobStatus) error
+}
+
 type SyncOffers struct {
 	client      OffersClient
-	repo        OffersRepo
+	offersRepo  OffersRepo
+	jobsRepo    JobsRepo
 	logger      *slog.Logger
 	afterSaleID string
 }
 
-func NewSyncOffers(client OffersClient, repo OffersRepo, logger *slog.Logger) *SyncOffers {
+func NewSyncOffers(client OffersClient, offersRepo OffersRepo, jobsRepo JobsRepo, logger *slog.Logger) *SyncOffers {
 	return &SyncOffers{
 		client:      client,
-		repo:        repo,
+		offersRepo:  offersRepo,
+		jobsRepo:    jobsRepo,
 		logger:      logger,
 		afterSaleID: "0",
 	}
 }
 
-func (uc *SyncOffers) Execute(ctx context.Context) error {
+func (uc *SyncOffers) Execute(ctx context.Context, jobID string) {
+	uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusRunning)
+
+	if err := uc.doSync(ctx); err != nil {
+		uc.logger.Error("sync offers do sync",
+			"error", err)
+		uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusFailed)
+	}
+
+	uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusDone)
+}
+
+func (uc *SyncOffers) doSync(ctx context.Context) error {
 	cnt := 0
 	for {
 		cnt += 1
@@ -65,7 +84,7 @@ func (uc *SyncOffers) Execute(ctx context.Context) error {
 			return ErrBodyWithoutOffers
 		}
 
-		err = uc.repo.CreateMany(ctx, *offers)
+		err = uc.offersRepo.CreateMany(ctx, *offers)
 		if err != nil {
 			uc.logger.Error("sync offers",
 				"error", err)

@@ -2,8 +2,9 @@ package http
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
-	pb "skinbaron-analyzer/proto/parsing/v1"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/reporting/internal/domain"
 	"skinbaron-analyzer/services/reporting/internal/transport/http/render"
 	"strconv"
@@ -25,7 +26,7 @@ const (
 )
 
 type SyncOffersService interface {
-	Execute(ctx context.Context) (*pb.SyncOffersResponse, error)
+	Execute(ctx context.Context, jobType jobs.SyncJobType) (string, error)
 }
 
 type ListOffersService interface {
@@ -35,17 +36,39 @@ type ListOffersService interface {
 type OffersHandler struct {
 	syncOffers SyncOffersService
 	listOffers ListOffersService
+	logger     *slog.Logger
 }
 
-func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService) *OffersHandler {
+func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService, logger *slog.Logger) *OffersHandler {
 	return &OffersHandler{
 		syncOffers: syncOffers,
 		listOffers: listOffers,
+		logger:     logger,
 	}
 }
 
-func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
+type SyncOffersOutput struct {
+	JobID string `json:"job_id"`
+}
 
+func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncOffers)
+	if err != nil {
+		h.logger.Error("sync offers execute",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
+
+	var syncOffersOutput SyncOffersOutput
+	syncOffersOutput.JobID = jobID
+	if err := render.OK(w, syncOffersOutput); err != nil {
+		h.logger.Error("sync offers rendering response",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
 }
 
 type ListOffersPayload struct {

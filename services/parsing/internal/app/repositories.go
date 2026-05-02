@@ -12,6 +12,7 @@ type Repositories struct {
 	ItemWears        repository.ItemWearsRepository
 	MarketSyncSource repository.MarketSyncSourceRepository
 	ItemWearSale     repository.ItemWearSaleRepository
+	Jobs             repository.JobRepository
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
@@ -21,5 +22,6 @@ func NewRepositories(db *sql.DB) *Repositories {
 		ItemWears:        postgres.NewItemWearsRepo(db),
 		MarketSyncSource: postgres.NewMarketSyncSourceRepo(db),
 		ItemWearSale:     postgres.NewItemWearSaleRepo(db),
+		Jobs:             postgres.NewJobRepo(db),
 	}
 }

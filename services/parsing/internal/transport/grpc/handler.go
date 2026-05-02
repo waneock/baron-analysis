@@ -12,10 +12,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type SyncOffersUseCase interface {
-	Execute(ctx context.Context) error
-}
-
 type ListOffersUseCase interface {
 	Execute(ctx context.Context, input usecase.ListOffersInput) (*usecase.ListOfferResult, error)
 }
@@ -23,26 +19,13 @@ type ListOffersUseCase interface {
 type Handler struct {
 	pb.UnimplementedParsingServiceServer
 
-	syncOffersUC SyncOffersUseCase
 	listOffersUC ListOffersUseCase
 }
 
-func NewHandler(syncOffersUC SyncOffersUseCase, listOffersUC ListOffersUseCase) *Handler {
+func NewHandler(listOffersUC ListOffersUseCase) *Handler {
 	return &Handler{
-		syncOffersUC: syncOffersUC,
 		listOffersUC: listOffersUC,
 	}
-}
-
-func (h *Handler) SyncOffers(ctx context.Context, req *pb.SyncOffersRequest) (*pb.SyncOffersResponse, error) {
-	if err := h.syncOffersUC.Execute(ctx); err != nil {
-		return nil, status.Errorf(codes.Internal, "sync offers: %v", err)
-	}
-
-	return &pb.SyncOffersResponse{
-		Success: true,
-		Message: "sync successfully started",
-	}, nil
 }
 
 func (h *Handler) ListOffers(ctx context.Context, req *pb.ListOffersRequest) (*pb.ListOffersResponse, error) {
