@@ -26,6 +26,7 @@ import (
 )
 
 func main() {
+	time.Sleep(60 * time.Second)
 	cfg := config.MustLoad()
 
 	if cfg == nil {
@@ -54,7 +55,7 @@ func main() {
 	}
 
 	writer := &kafkago.Writer{
-		Addr:     kafkago.TCP("kafka:9092"),
+		Addr:     kafkago.TCP("kafka:29092"),
 		Balancer: &kafkago.LeastBytes{},
 	}
 
