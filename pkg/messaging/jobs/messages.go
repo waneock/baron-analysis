@@ -15,6 +15,7 @@ type SyncJobType string
 
 const (
 	SyncJobTypeSyncOffers    SyncJobType = "sync_offers"
+	SyncJobTypeSyncItems     SyncJobType = "sync_items"
 	SyncJobTypeSyncItemSales SyncJobType = "sync_item_sales"
 )
 

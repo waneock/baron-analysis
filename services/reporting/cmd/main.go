@@ -26,6 +26,8 @@ import (
 )
 
 func main() {
+	// add startup delay, give kafka time to start
+	// TODO: find another solution
 	time.Sleep(60 * time.Second)
 	cfg := config.MustLoad()
 

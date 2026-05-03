@@ -50,24 +50,24 @@ func main() {
 
 	baronClient := baron.New("https://api.skinbaron.de", env.GetAPIKey(), 30*time.Second)
 
-	// syncItemPrices := usecase.NewSyncItemPrices(
-	// 	repos.Items,
-	// 	repos.MarketSyncSource,
-	// 	repos.ItemWearSale,
-	// 	baronClient,
-	// 	log,
-	// )
+	syncItems := usecase.NewItemsService(
+		repos.Items,
+		repos.ItemWears,
+		repos.Jobs,
+		log,
+		cfg.JSONData.ItemPath,
+	)
 
-	// ctx := context.Background()
-	// err = syncItemPrices.Execute(ctx)
-	// if err != nil {
-	// 	log.Error("error happens during sync items",
-	// 		"err", err)
-	// }
+	syncItemPrices := usecase.NewSyncItemPrices(
+		repos.Items,
+		repos.MarketSyncSource,
+		repos.ItemWearSale,
+		repos.Jobs,
+		baronClient,
+		log,
+	)
 
 	syncOffersUC := usecase.NewSyncOffers(baronClient, repos.Offers, repos.Jobs, log)
-	// ctx := context.Background()
-	// syncOffersUC.Execute(ctx)
 
 	reader := kafkago.NewReader(kafkago.ReaderConfig{
 		Brokers: []string{"kafka:29092"},
@@ -75,7 +75,11 @@ func main() {
 		GroupID: "parsing-sync-workers",
 	})
 
-	jobsHandler := kafka.NewJobsEventHandler(syncOffersUC)
+	jobsHandler := kafka.NewJobsEventHandler(
+		syncOffersUC,
+		syncItems,
+		syncItemPrices)
+
 	consumer := kafka.NewConsumer(reader, jobsHandler, log)
 
 	go func() {
