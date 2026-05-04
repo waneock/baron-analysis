@@ -229,3 +229,44 @@ func svcOutToListOffersOut(input domain.ListOffersOutput) *ListOfferOutput {
 		Offset: input.Offset,
 	}
 }
+
+func (h *OffersHandler) SyncItems(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncItems)
+	if err != nil {
+		h.logger.Error("sync offers execute",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
+
+	var syncOffersOutput SyncOffersOutput
+	syncOffersOutput.JobID = jobID
+	if err := render.OK(w, syncOffersOutput); err != nil {
+		h.logger.Error("sync offers rendering response",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
+}
+
+// TODO: review this structure, make a single function which will take a job type
+func (h *OffersHandler) SyncItemSales(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncItemSales)
+	if err != nil {
+		h.logger.Error("sync offers execute",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
+
+	var syncOffersOutput SyncOffersOutput
+	syncOffersOutput.JobID = jobID
+	if err := render.OK(w, syncOffersOutput); err != nil {
+		h.logger.Error("sync offers rendering response",
+			"error", err)
+		render.InternalServerErr(w)
+		return
+	}
+}

@@ -90,6 +90,14 @@ func main() {
 			r.Get("/list", httpHandler.ListOffers)
 			r.Post("/sync", httpHandler.SyncOffers)
 		})
+
+		r.Route("/items", func(r chi.Router) {
+			r.Post("/sync", httpHandler.SyncItems)
+		})
+
+		r.Route("/sales", func(r chi.Router) {
+			r.Post("/sync", httpHandler.SyncItemSales)
+		})
 	})
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
