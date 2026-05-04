@@ -77,7 +77,7 @@ func (uc *SyncItemPrices) doSync(ctx context.Context) error {
 		return ErrCountItems
 	}
 
-	for i := 0; i < total; i += limitDefaultValue {
+	for i := 3214; i < total; i += limitDefaultValue {
 		uc.log.Info("sync item prices",
 			"index", i,
 			"total", total)

@@ -25,8 +25,6 @@ type SyncOffersJob struct {
 	producer SyncJobsProducer
 }
 
-//TODO: review this file, make a generic service for working with syncs, since the logic is the same
-
 func NewSyncOffers(repo SyncJobsRepository, producer SyncJobsProducer) *SyncOffersJob {
 	return &SyncOffersJob{
 		repo:     repo,

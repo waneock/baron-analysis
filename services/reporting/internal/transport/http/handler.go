@@ -47,30 +47,6 @@ func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService
 	}
 }
 
-type SyncOffersOutput struct {
-	JobID string `json:"job_id"`
-}
-
-func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncOffers)
-	if err != nil {
-		h.logger.Error("sync offers execute",
-			"error", err)
-		render.InternalServerErr(w)
-		return
-	}
-
-	var syncOffersOutput SyncOffersOutput
-	syncOffersOutput.JobID = jobID
-	if err := render.OK(w, syncOffersOutput); err != nil {
-		h.logger.Error("sync offers rendering response",
-			"error", err)
-		render.InternalServerErr(w)
-		return
-	}
-}
-
 type ListOffersPayload struct {
 	Limit       int64      `json:"limit"`
 	Offset      int64      `json:"offset"`
@@ -230,41 +206,37 @@ func svcOutToListOffersOut(input domain.ListOffersOutput) *ListOfferOutput {
 	}
 }
 
-func (h *OffersHandler) SyncItems(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncItems)
-	if err != nil {
-		h.logger.Error("sync offers execute",
-			"error", err)
-		render.InternalServerErr(w)
-		return
-	}
-
-	var syncOffersOutput SyncOffersOutput
-	syncOffersOutput.JobID = jobID
-	if err := render.OK(w, syncOffersOutput); err != nil {
-		h.logger.Error("sync offers rendering response",
-			"error", err)
-		render.InternalServerErr(w)
-		return
-	}
+type StartSyncOutput struct {
+	JobID string `json:"job_id"`
 }
 
-// TODO: review this structure, make a single function which will take a job type
+func (h *OffersHandler) SyncOffers(w http.ResponseWriter, r *http.Request) {
+	h.startSync(w, r, jobs.SyncJobTypeSyncOffers)
+
+}
+
+func (h *OffersHandler) SyncItems(w http.ResponseWriter, r *http.Request) {
+	h.startSync(w, r, jobs.SyncJobTypeSyncItems)
+}
+
 func (h *OffersHandler) SyncItemSales(w http.ResponseWriter, r *http.Request) {
+	h.startSync(w, r, jobs.SyncJobTypeSyncItemSales)
+}
+
+func (h *OffersHandler) startSync(w http.ResponseWriter, r *http.Request, jobType jobs.SyncJobType) {
 	ctx := r.Context()
-	jobID, err := h.syncOffers.Execute(ctx, jobs.SyncJobTypeSyncItemSales)
+	jobID, err := h.syncOffers.Execute(ctx, jobType)
 	if err != nil {
-		h.logger.Error("sync offers execute",
+		h.logger.Error("start sync execute",
 			"error", err)
 		render.InternalServerErr(w)
 		return
 	}
 
-	var syncOffersOutput SyncOffersOutput
-	syncOffersOutput.JobID = jobID
-	if err := render.OK(w, syncOffersOutput); err != nil {
-		h.logger.Error("sync offers rendering response",
+	var startSyncOutput StartSyncOutput
+	startSyncOutput.JobID = jobID
+	if err := render.OK(w, startSyncOutput); err != nil {
+		h.logger.Error("start sync rendering response",
 			"error", err)
 		render.InternalServerErr(w)
 		return
