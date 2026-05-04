@@ -20,19 +20,19 @@ type SyncJobsProducer interface {
 	PublishJobRequested(ctx context.Context, jobID string, jobType jobs.SyncJobType) error
 }
 
-type StartSyncJob struct {
+type SyncOffersJob struct {
 	repo     SyncJobsRepository
 	producer SyncJobsProducer
 }
 
-func NewSyncOffers(repo SyncJobsRepository, producer SyncJobsProducer) *StartSyncJob {
-	return &StartSyncJob{
+func NewSyncOffers(repo SyncJobsRepository, producer SyncJobsProducer) *SyncOffersJob {
+	return &SyncOffersJob{
 		repo:     repo,
 		producer: producer,
 	}
 }
 
-func (uc *StartSyncJob) Execute(ctx context.Context, jobType jobs.SyncJobType) (string, error) {
+func (uc *SyncOffersJob) Execute(ctx context.Context, jobType jobs.SyncJobType) (string, error) {
 	jobID := uuid.NewString()
 
 	job := jobs.SyncJob{

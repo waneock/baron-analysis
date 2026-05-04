@@ -26,6 +26,8 @@ import (
 )
 
 func main() {
+	// add startup delay, give kafka time to start
+	// TODO: find another solution
 	time.Sleep(60 * time.Second)
 	cfg := config.MustLoad()
 
@@ -87,6 +89,14 @@ func main() {
 		r.Route("/offers", func(r chi.Router) {
 			r.Get("/list", httpHandler.ListOffers)
 			r.Post("/sync", httpHandler.SyncOffers)
+		})
+
+		r.Route("/items", func(r chi.Router) {
+			r.Post("/sync", httpHandler.SyncItems)
+		})
+
+		r.Route("/sales", func(r chi.Router) {
+			r.Post("/sync", httpHandler.SyncItemSales)
 		})
 	})
 

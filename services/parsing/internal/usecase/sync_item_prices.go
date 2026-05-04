@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"skinbaron-analyzer/pkg/messaging/jobs"
 	"skinbaron-analyzer/services/parsing/internal/domain"
 )
 
@@ -35,6 +36,7 @@ type SyncItemPrices struct {
 	itemRepo             ItemsRepo
 	marketSyncSourceRepo MarketSyncSourceRepo
 	itemWearSalesRepo    ItemWearSalesRepo
+	jobsRepo             JobsRepo
 	baronClient          BaronClient
 	log                  *slog.Logger
 }
@@ -42,18 +44,32 @@ type SyncItemPrices struct {
 func NewSyncItemPrices(itemRepo ItemsRepo,
 	marketSyncSourceRepo MarketSyncSourceRepo,
 	itemWearSalesRepo ItemWearSalesRepo,
+	jobsRepo JobsRepo,
 	baronClient BaronClient,
 	log *slog.Logger) *SyncItemPrices {
 	return &SyncItemPrices{
 		itemRepo:             itemRepo,
 		marketSyncSourceRepo: marketSyncSourceRepo,
 		itemWearSalesRepo:    itemWearSalesRepo,
+		jobsRepo:             jobsRepo,
 		baronClient:          baronClient,
 		log:                  log,
 	}
 }
 
-func (uc *SyncItemPrices) Execute(ctx context.Context) error {
+func (uc *SyncItemPrices) Execute(ctx context.Context, jobID string) {
+	uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusRunning)
+
+	if err := uc.doSync(ctx); err != nil {
+		uc.log.Error("sync items do sync",
+			"error", err)
+		uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusFailed)
+	}
+
+	uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusDone)
+}
+
+func (uc *SyncItemPrices) doSync(ctx context.Context) error {
 	total, err := uc.marketSyncSourceRepo.Count(ctx)
 	if err != nil {
 		uc.log.Error("error when trying to count the items",
@@ -61,7 +77,7 @@ func (uc *SyncItemPrices) Execute(ctx context.Context) error {
 		return ErrCountItems
 	}
 
-	for i := 8584; i < total; i += limitDefaultValue {
+	for i := 3214; i < total; i += limitDefaultValue {
 		uc.log.Info("sync item prices",
 			"index", i,
 			"total", total)

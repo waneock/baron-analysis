@@ -53,6 +53,7 @@ func (uc *SyncOffers) Execute(ctx context.Context, jobID string) {
 		uc.logger.Error("sync offers do sync",
 			"error", err)
 		uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusFailed)
+		return
 	}
 
 	uc.jobsRepo.UpdateStatus(ctx, jobID, jobs.SyncJobStatusDone)
