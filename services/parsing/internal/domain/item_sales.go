@@ -22,6 +22,12 @@ type ListItemSalesFilter struct {
 	SoldTo        *time.Time
 }
 
+type ListItemSalesOutput struct {
+	Items  []ItemSales
+	Limit  int64
+	Offset int64
+}
+
 type ItemSalesStats struct {
 	ItemID     string
 	ItemName   string
@@ -49,4 +55,10 @@ type ListItemSalesStatsFilter struct {
 	SoldFrom      *time.Time
 	SoldTo        *time.Time
 	MinSalesCount *int64
+}
+
+type ListItemSalesStatsOutput struct {
+	Items  []ItemSalesStats
+	Limit  int64
+	Offset int64
 }
