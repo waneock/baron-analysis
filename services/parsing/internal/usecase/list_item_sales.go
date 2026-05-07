@@ -20,7 +20,7 @@ func NewItemSalesService(itemSalesRepo ItemSalesRepo) *ItemSalesService {
 	}
 }
 
-func (s *ItemSalesService) ListSales(ctx context.Context, filter domain.ListItemSalesFilter) (*domain.ListItemSalesOutput, error) {
+func (uc *ItemSalesService) ListSales(ctx context.Context, filter domain.ListItemSalesFilter) (*domain.ListItemSalesOutput, error) {
 	if filter.Offset < 0 {
 		filter.Offset = listOffsetFielDefault
 	}
@@ -30,7 +30,7 @@ func (s *ItemSalesService) ListSales(ctx context.Context, filter domain.ListItem
 	}
 
 	var output domain.ListItemSalesOutput
-	items, err := s.itemSalesRepo.ListSales(ctx, filter)
+	items, err := uc.itemSalesRepo.ListSales(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (s *ItemSalesService) ListSales(ctx context.Context, filter domain.ListItem
 	return &output, nil
 }
 
-func (s *ItemSalesService) ListSalesStat(ctx context.Context, filter domain.ListItemSalesStatsFilter) (*domain.ListItemSalesStatsOutput, error) {
+func (uc *ItemSalesService) ListSalesStat(ctx context.Context, filter domain.ListItemSalesStatsFilter) (*domain.ListItemSalesStatsOutput, error) {
 	if filter.Offset < 0 {
 		filter.Offset = listOffsetFielDefault
 	}
@@ -52,7 +52,7 @@ func (s *ItemSalesService) ListSalesStat(ctx context.Context, filter domain.List
 	}
 
 	var output domain.ListItemSalesStatsOutput
-	items, err := s.itemSalesRepo.ListSalesStats(ctx, filter)
+	items, err := uc.itemSalesRepo.ListSalesStats(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
