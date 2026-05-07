@@ -50,6 +50,11 @@ type ItemWearSaleRepository interface {
 	CreateMany(ctx context.Context, items []domain.ItemWearSale) error
 }
 
+type ItemSalesRepository interface {
+	ListSales(ctx context.Context, filter domain.ListItemSalesFilter) ([]domain.ItemSales, error)
+	ListSalesStats(ctx context.Context, filter domain.ListItemSalesStatsFilter) ([]domain.ItemSalesStats, error)
+}
+
 type JobRepository interface {
 	UpdateStatus(ctx context.Context, id string, status jobs.SyncJobStatus) error
 }
@@ -60,5 +65,6 @@ type Repo struct {
 	ItemWearsRepository        ItemWearsRepository
 	MarketSyncSourceRepository MarketSyncSourceRepository
 	ItemWearSaleRepository     ItemWearSaleRepository
+	ItemSalesRepository        ItemSalesRepository
 	JobRepository              JobRepository
 }
