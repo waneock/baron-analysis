@@ -7,15 +7,10 @@ option go_package = "skinbaron-analyzer/proto/parsing/v1;parsingv1";
 import "google/protobuf/timestamp.proto";
 
 service ParsingService {
-  rpc SyncOffers(SyncOffersRequest) returns (SyncOffersResponse);
   rpc ListOffers(ListOffersRequest) returns (ListOffersResponse);
-}
 
-message SyncOffersRequest {}
-
-message SyncOffersResponse {
-  bool success = 1;
-  string message = 2;
+  rpc ListItemSalesStats(ListItemSalesStatsRequest) returns (ListItemSalesStatsResponse);
+  rpc ListItemSales(ListItemSalesRequest) returns (ListItemSalesResponse);
 }
 
 message ListOffersRequest {
@@ -60,4 +55,63 @@ message ListOffersResponse {
   int64 total = 2;
   int64 limit = 3;
   int64 offset = 4;
+}
+
+message ListItemSalesStatsRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+  optional string item_name_query = 3;
+  optional string wear_name = 4;
+  optional double min_price = 5;
+  optional double max_price = 6;
+  optional string sold_from = 7;
+  optional string sold_to = 8;
+  optional int64 min_sales_count = 9;
+}
+
+message ItemSalesStats {
+  string item_id = 1;
+  string item_name = 2;
+  int64 item_wear_id = 3;
+  string wear_name = 4;
+  int64 sales_count = 5;
+  double avg_price = 6;
+  double median_price = 7;
+  double min_price = 8;
+  double max_price = 9;
+  repeated double sold_prices = 10;
+  string first_sold_on = 11;
+  string last_sold_on = 12;
+}
+
+message ListItemSalesStatsResponse {
+  repeated ItemSalesStats items = 1;
+  int64 limit = 2;
+  int64 offset = 3;
+}
+
+message ListItemSalesRequest {
+  int64 limit = 1;
+  int64 offset = 2;
+  optional string item_name_query = 3;
+  optional string wear_name = 4;
+  optional int64 item_wear_id = 5;
+  optional double min_price = 6;
+  optional double max_price = 7;
+  optional string sold_from = 8;
+  optional string sold_to = 9;
+}
+
+message ItemSale {
+  string item_name = 1;
+  string wear_name = 2;
+  double price = 3;
+  double wear_value = 4;
+  string sold_on = 5;
+}
+
+message ListItemSalesResponse {
+  repeated ItemSale items = 1;
+  int64 limit = 2;
+  int64 offset = 3;
 }
