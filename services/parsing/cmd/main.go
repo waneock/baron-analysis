@@ -89,8 +89,9 @@ func main() {
 	}()
 
 	listOffersUC := usecase.NewListOfferService(repos.Offers, log)
+	itemSalesUC := usecase.NewItemSalesService(repos.ItemSales)
 
-	handler := transportgrpc.NewHandler(listOffersUC)
+	handler := transportgrpc.NewHandler(listOffersUC, itemSalesUC)
 	server := transportgrpc.NewServer(cfg.GRPCConfig.Address, handler)
 
 	log.Info("starting grpc server on: ",

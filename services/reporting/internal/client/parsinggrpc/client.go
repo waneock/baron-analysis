@@ -46,3 +46,29 @@ func (c *Client) ListOffers(ctx context.Context, input domain.ListOffersInput) (
 
 	return listOffersOutput, nil
 }
+
+func (c *Client) ListItemSales(ctx context.Context, input domain.ListItemSalesInput) (*domain.ListItemSalesOutput, error) {
+	pbListItemSalesRequest := listItemSalesInputToPbRequest(input)
+
+	pbListItemSalesResponse, err := c.client.ListItemSales(ctx, &pbListItemSalesRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	listItemSalesOutput := pbResponseToListItemSalesOut(pbListItemSalesResponse)
+
+	return &listItemSalesOutput, nil
+}
+
+func (c *Client) ListItemSalesStats(ctx context.Context, input domain.ListItemSalesStatInput) (*domain.ListItemSalesStatOutput, error) {
+	pbListItemSalesStatRequest := listItemSalesStatsInputToPbRequest(input)
+
+	pbListItemSalesStatResponse, err := c.client.ListItemSalesStats(ctx, &pbListItemSalesStatRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	listItemSalesStatOutput := pbResponseToListItemSalesStatsOut(pbListItemSalesStatResponse)
+
+	return &listItemSalesStatOutput, nil
+}

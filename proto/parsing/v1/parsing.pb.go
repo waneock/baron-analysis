@@ -22,94 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SyncOffersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncOffersRequest) Reset() {
-	*x = SyncOffersRequest{}
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncOffersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncOffersRequest) ProtoMessage() {}
-
-func (x *SyncOffersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncOffersRequest.ProtoReflect.Descriptor instead.
-func (*SyncOffersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{0}
-}
-
-type SyncOffersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncOffersResponse) Reset() {
-	*x = SyncOffersResponse{}
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncOffersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncOffersResponse) ProtoMessage() {}
-
-func (x *SyncOffersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncOffersResponse.ProtoReflect.Descriptor instead.
-func (*SyncOffersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *SyncOffersResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-func (x *SyncOffersResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
 type ListOffersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Limit         int64                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
@@ -129,7 +41,7 @@ type ListOffersRequest struct {
 
 func (x *ListOffersRequest) Reset() {
 	*x = ListOffersRequest{}
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[2]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -141,7 +53,7 @@ func (x *ListOffersRequest) String() string {
 func (*ListOffersRequest) ProtoMessage() {}
 
 func (x *ListOffersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[2]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -154,7 +66,7 @@ func (x *ListOffersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOffersRequest.ProtoReflect.Descriptor instead.
 func (*ListOffersRequest) Descriptor() ([]byte, []int) {
-	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{2}
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ListOffersRequest) GetLimit() int64 {
@@ -262,7 +174,7 @@ type Offer struct {
 
 func (x *Offer) Reset() {
 	*x = Offer{}
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[3]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +186,7 @@ func (x *Offer) String() string {
 func (*Offer) ProtoMessage() {}
 
 func (x *Offer) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[3]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +199,7 @@ func (x *Offer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Offer.ProtoReflect.Descriptor instead.
 func (*Offer) Descriptor() ([]byte, []int) {
-	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{3}
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Offer) GetId() string {
@@ -442,7 +354,7 @@ type ListOffersResponse struct {
 
 func (x *ListOffersResponse) Reset() {
 	*x = ListOffersResponse{}
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[4]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -454,7 +366,7 @@ func (x *ListOffersResponse) String() string {
 func (*ListOffersResponse) ProtoMessage() {}
 
 func (x *ListOffersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[4]
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -467,7 +379,7 @@ func (x *ListOffersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOffersResponse.ProtoReflect.Descriptor instead.
 func (*ListOffersResponse) Descriptor() ([]byte, []int) {
-	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{4}
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListOffersResponse) GetItems() []*Offer {
@@ -498,16 +410,556 @@ func (x *ListOffersResponse) GetOffset() int64 {
 	return 0
 }
 
+type ListItemSalesStatsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int64                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	ItemNameQuery *string                `protobuf:"bytes,3,opt,name=item_name_query,json=itemNameQuery,proto3,oneof" json:"item_name_query,omitempty"`
+	WearName      *string                `protobuf:"bytes,4,opt,name=wear_name,json=wearName,proto3,oneof" json:"wear_name,omitempty"`
+	MinPrice      *float64               `protobuf:"fixed64,5,opt,name=min_price,json=minPrice,proto3,oneof" json:"min_price,omitempty"`
+	MaxPrice      *float64               `protobuf:"fixed64,6,opt,name=max_price,json=maxPrice,proto3,oneof" json:"max_price,omitempty"`
+	SoldFrom      *string                `protobuf:"bytes,7,opt,name=sold_from,json=soldFrom,proto3,oneof" json:"sold_from,omitempty"`
+	SoldTo        *string                `protobuf:"bytes,8,opt,name=sold_to,json=soldTo,proto3,oneof" json:"sold_to,omitempty"`
+	MinSalesCount *int64                 `protobuf:"varint,9,opt,name=min_sales_count,json=minSalesCount,proto3,oneof" json:"min_sales_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListItemSalesStatsRequest) Reset() {
+	*x = ListItemSalesStatsRequest{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListItemSalesStatsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListItemSalesStatsRequest) ProtoMessage() {}
+
+func (x *ListItemSalesStatsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListItemSalesStatsRequest.ProtoReflect.Descriptor instead.
+func (*ListItemSalesStatsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListItemSalesStatsRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListItemSalesStatsRequest) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListItemSalesStatsRequest) GetItemNameQuery() string {
+	if x != nil && x.ItemNameQuery != nil {
+		return *x.ItemNameQuery
+	}
+	return ""
+}
+
+func (x *ListItemSalesStatsRequest) GetWearName() string {
+	if x != nil && x.WearName != nil {
+		return *x.WearName
+	}
+	return ""
+}
+
+func (x *ListItemSalesStatsRequest) GetMinPrice() float64 {
+	if x != nil && x.MinPrice != nil {
+		return *x.MinPrice
+	}
+	return 0
+}
+
+func (x *ListItemSalesStatsRequest) GetMaxPrice() float64 {
+	if x != nil && x.MaxPrice != nil {
+		return *x.MaxPrice
+	}
+	return 0
+}
+
+func (x *ListItemSalesStatsRequest) GetSoldFrom() string {
+	if x != nil && x.SoldFrom != nil {
+		return *x.SoldFrom
+	}
+	return ""
+}
+
+func (x *ListItemSalesStatsRequest) GetSoldTo() string {
+	if x != nil && x.SoldTo != nil {
+		return *x.SoldTo
+	}
+	return ""
+}
+
+func (x *ListItemSalesStatsRequest) GetMinSalesCount() int64 {
+	if x != nil && x.MinSalesCount != nil {
+		return *x.MinSalesCount
+	}
+	return 0
+}
+
+type ItemSalesStats struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ItemId        string                 `protobuf:"bytes,1,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	ItemName      string                 `protobuf:"bytes,2,opt,name=item_name,json=itemName,proto3" json:"item_name,omitempty"`
+	ItemWearId    int64                  `protobuf:"varint,3,opt,name=item_wear_id,json=itemWearId,proto3" json:"item_wear_id,omitempty"`
+	WearName      string                 `protobuf:"bytes,4,opt,name=wear_name,json=wearName,proto3" json:"wear_name,omitempty"`
+	SalesCount    int64                  `protobuf:"varint,5,opt,name=sales_count,json=salesCount,proto3" json:"sales_count,omitempty"`
+	AvgPrice      float64                `protobuf:"fixed64,6,opt,name=avg_price,json=avgPrice,proto3" json:"avg_price,omitempty"`
+	MedianPrice   float64                `protobuf:"fixed64,7,opt,name=median_price,json=medianPrice,proto3" json:"median_price,omitempty"`
+	MinPrice      float64                `protobuf:"fixed64,8,opt,name=min_price,json=minPrice,proto3" json:"min_price,omitempty"`
+	MaxPrice      float64                `protobuf:"fixed64,9,opt,name=max_price,json=maxPrice,proto3" json:"max_price,omitempty"`
+	SoldPrices    []float64              `protobuf:"fixed64,10,rep,packed,name=sold_prices,json=soldPrices,proto3" json:"sold_prices,omitempty"`
+	FirstSoldOn   string                 `protobuf:"bytes,11,opt,name=first_sold_on,json=firstSoldOn,proto3" json:"first_sold_on,omitempty"`
+	LastSoldOn    string                 `protobuf:"bytes,12,opt,name=last_sold_on,json=lastSoldOn,proto3" json:"last_sold_on,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ItemSalesStats) Reset() {
+	*x = ItemSalesStats{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ItemSalesStats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ItemSalesStats) ProtoMessage() {}
+
+func (x *ItemSalesStats) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ItemSalesStats.ProtoReflect.Descriptor instead.
+func (*ItemSalesStats) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ItemSalesStats) GetItemId() string {
+	if x != nil {
+		return x.ItemId
+	}
+	return ""
+}
+
+func (x *ItemSalesStats) GetItemName() string {
+	if x != nil {
+		return x.ItemName
+	}
+	return ""
+}
+
+func (x *ItemSalesStats) GetItemWearId() int64 {
+	if x != nil {
+		return x.ItemWearId
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetWearName() string {
+	if x != nil {
+		return x.WearName
+	}
+	return ""
+}
+
+func (x *ItemSalesStats) GetSalesCount() int64 {
+	if x != nil {
+		return x.SalesCount
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetAvgPrice() float64 {
+	if x != nil {
+		return x.AvgPrice
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetMedianPrice() float64 {
+	if x != nil {
+		return x.MedianPrice
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetMinPrice() float64 {
+	if x != nil {
+		return x.MinPrice
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetMaxPrice() float64 {
+	if x != nil {
+		return x.MaxPrice
+	}
+	return 0
+}
+
+func (x *ItemSalesStats) GetSoldPrices() []float64 {
+	if x != nil {
+		return x.SoldPrices
+	}
+	return nil
+}
+
+func (x *ItemSalesStats) GetFirstSoldOn() string {
+	if x != nil {
+		return x.FirstSoldOn
+	}
+	return ""
+}
+
+func (x *ItemSalesStats) GetLastSoldOn() string {
+	if x != nil {
+		return x.LastSoldOn
+	}
+	return ""
+}
+
+type ListItemSalesStatsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*ItemSalesStats      `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListItemSalesStatsResponse) Reset() {
+	*x = ListItemSalesStatsResponse{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListItemSalesStatsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListItemSalesStatsResponse) ProtoMessage() {}
+
+func (x *ListItemSalesStatsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListItemSalesStatsResponse.ProtoReflect.Descriptor instead.
+func (*ListItemSalesStatsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListItemSalesStatsResponse) GetItems() []*ItemSalesStats {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListItemSalesStatsResponse) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListItemSalesStatsResponse) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListItemSalesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int64                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	ItemNameQuery *string                `protobuf:"bytes,3,opt,name=item_name_query,json=itemNameQuery,proto3,oneof" json:"item_name_query,omitempty"`
+	WearName      *string                `protobuf:"bytes,4,opt,name=wear_name,json=wearName,proto3,oneof" json:"wear_name,omitempty"`
+	ItemWearId    *int64                 `protobuf:"varint,5,opt,name=item_wear_id,json=itemWearId,proto3,oneof" json:"item_wear_id,omitempty"`
+	MinPrice      *float64               `protobuf:"fixed64,6,opt,name=min_price,json=minPrice,proto3,oneof" json:"min_price,omitempty"`
+	MaxPrice      *float64               `protobuf:"fixed64,7,opt,name=max_price,json=maxPrice,proto3,oneof" json:"max_price,omitempty"`
+	SoldFrom      *string                `protobuf:"bytes,8,opt,name=sold_from,json=soldFrom,proto3,oneof" json:"sold_from,omitempty"`
+	SoldTo        *string                `protobuf:"bytes,9,opt,name=sold_to,json=soldTo,proto3,oneof" json:"sold_to,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListItemSalesRequest) Reset() {
+	*x = ListItemSalesRequest{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListItemSalesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListItemSalesRequest) ProtoMessage() {}
+
+func (x *ListItemSalesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListItemSalesRequest.ProtoReflect.Descriptor instead.
+func (*ListItemSalesRequest) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListItemSalesRequest) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListItemSalesRequest) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListItemSalesRequest) GetItemNameQuery() string {
+	if x != nil && x.ItemNameQuery != nil {
+		return *x.ItemNameQuery
+	}
+	return ""
+}
+
+func (x *ListItemSalesRequest) GetWearName() string {
+	if x != nil && x.WearName != nil {
+		return *x.WearName
+	}
+	return ""
+}
+
+func (x *ListItemSalesRequest) GetItemWearId() int64 {
+	if x != nil && x.ItemWearId != nil {
+		return *x.ItemWearId
+	}
+	return 0
+}
+
+func (x *ListItemSalesRequest) GetMinPrice() float64 {
+	if x != nil && x.MinPrice != nil {
+		return *x.MinPrice
+	}
+	return 0
+}
+
+func (x *ListItemSalesRequest) GetMaxPrice() float64 {
+	if x != nil && x.MaxPrice != nil {
+		return *x.MaxPrice
+	}
+	return 0
+}
+
+func (x *ListItemSalesRequest) GetSoldFrom() string {
+	if x != nil && x.SoldFrom != nil {
+		return *x.SoldFrom
+	}
+	return ""
+}
+
+func (x *ListItemSalesRequest) GetSoldTo() string {
+	if x != nil && x.SoldTo != nil {
+		return *x.SoldTo
+	}
+	return ""
+}
+
+type ItemSale struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ItemName      string                 `protobuf:"bytes,1,opt,name=item_name,json=itemName,proto3" json:"item_name,omitempty"`
+	WearName      string                 `protobuf:"bytes,2,opt,name=wear_name,json=wearName,proto3" json:"wear_name,omitempty"`
+	Price         float64                `protobuf:"fixed64,3,opt,name=price,proto3" json:"price,omitempty"`
+	WearValue     float64                `protobuf:"fixed64,4,opt,name=wear_value,json=wearValue,proto3" json:"wear_value,omitempty"`
+	SoldOn        string                 `protobuf:"bytes,5,opt,name=sold_on,json=soldOn,proto3" json:"sold_on,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ItemSale) Reset() {
+	*x = ItemSale{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ItemSale) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ItemSale) ProtoMessage() {}
+
+func (x *ItemSale) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ItemSale.ProtoReflect.Descriptor instead.
+func (*ItemSale) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ItemSale) GetItemName() string {
+	if x != nil {
+		return x.ItemName
+	}
+	return ""
+}
+
+func (x *ItemSale) GetWearName() string {
+	if x != nil {
+		return x.WearName
+	}
+	return ""
+}
+
+func (x *ItemSale) GetPrice() float64 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
+func (x *ItemSale) GetWearValue() float64 {
+	if x != nil {
+		return x.WearValue
+	}
+	return 0
+}
+
+func (x *ItemSale) GetSoldOn() string {
+	if x != nil {
+		return x.SoldOn
+	}
+	return ""
+}
+
+type ListItemSalesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*ItemSale            `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int64                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListItemSalesResponse) Reset() {
+	*x = ListItemSalesResponse{}
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListItemSalesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListItemSalesResponse) ProtoMessage() {}
+
+func (x *ListItemSalesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_parsing_v1_parsing_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListItemSalesResponse.ProtoReflect.Descriptor instead.
+func (*ListItemSalesResponse) Descriptor() ([]byte, []int) {
+	return file_proto_parsing_v1_parsing_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListItemSalesResponse) GetItems() []*ItemSale {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListItemSalesResponse) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListItemSalesResponse) GetOffset() int64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
 var File_proto_parsing_v1_parsing_proto protoreflect.FileDescriptor
 
 const file_proto_parsing_v1_parsing_proto_rawDesc = "" +
 	"\n" +
 	"\x1eproto/parsing/v1/parsing.proto\x12\n" +
-	"parsing.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
-	"\x11SyncOffersRequest\"H\n" +
-	"\x12SyncOffersResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x9e\x04\n" +
+	"parsing.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\x04\n" +
 	"\x11ListOffersRequest\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x19\n" +
@@ -566,12 +1018,90 @@ const file_proto_parsing_v1_parsing_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\x11.parsing.v1.OfferR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x03R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x03R\x06offset2\xaa\x01\n" +
+	"\x06offset\x18\x04 \x01(\x03R\x06offset\"\xb5\x03\n" +
+	"\x19ListItemSalesStatsRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12+\n" +
+	"\x0fitem_name_query\x18\x03 \x01(\tH\x00R\ritemNameQuery\x88\x01\x01\x12 \n" +
+	"\twear_name\x18\x04 \x01(\tH\x01R\bwearName\x88\x01\x01\x12 \n" +
+	"\tmin_price\x18\x05 \x01(\x01H\x02R\bminPrice\x88\x01\x01\x12 \n" +
+	"\tmax_price\x18\x06 \x01(\x01H\x03R\bmaxPrice\x88\x01\x01\x12 \n" +
+	"\tsold_from\x18\a \x01(\tH\x04R\bsoldFrom\x88\x01\x01\x12\x1c\n" +
+	"\asold_to\x18\b \x01(\tH\x05R\x06soldTo\x88\x01\x01\x12+\n" +
+	"\x0fmin_sales_count\x18\t \x01(\x03H\x06R\rminSalesCount\x88\x01\x01B\x12\n" +
+	"\x10_item_name_queryB\f\n" +
+	"\n" +
+	"_wear_nameB\f\n" +
+	"\n" +
+	"_min_priceB\f\n" +
+	"\n" +
+	"_max_priceB\f\n" +
+	"\n" +
+	"_sold_fromB\n" +
+	"\n" +
+	"\b_sold_toB\x12\n" +
+	"\x10_min_sales_count\"\x87\x03\n" +
+	"\x0eItemSalesStats\x12\x17\n" +
+	"\aitem_id\x18\x01 \x01(\tR\x06itemId\x12\x1b\n" +
+	"\titem_name\x18\x02 \x01(\tR\bitemName\x12 \n" +
+	"\fitem_wear_id\x18\x03 \x01(\x03R\n" +
+	"itemWearId\x12\x1b\n" +
+	"\twear_name\x18\x04 \x01(\tR\bwearName\x12\x1f\n" +
+	"\vsales_count\x18\x05 \x01(\x03R\n" +
+	"salesCount\x12\x1b\n" +
+	"\tavg_price\x18\x06 \x01(\x01R\bavgPrice\x12!\n" +
+	"\fmedian_price\x18\a \x01(\x01R\vmedianPrice\x12\x1b\n" +
+	"\tmin_price\x18\b \x01(\x01R\bminPrice\x12\x1b\n" +
+	"\tmax_price\x18\t \x01(\x01R\bmaxPrice\x12\x1f\n" +
+	"\vsold_prices\x18\n" +
+	" \x03(\x01R\n" +
+	"soldPrices\x12\"\n" +
+	"\rfirst_sold_on\x18\v \x01(\tR\vfirstSoldOn\x12 \n" +
+	"\flast_sold_on\x18\f \x01(\tR\n" +
+	"lastSoldOn\"|\n" +
+	"\x1aListItemSalesStatsResponse\x120\n" +
+	"\x05items\x18\x01 \x03(\v2\x1a.parsing.v1.ItemSalesStatsR\x05items\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x03R\x06offset\"\xa7\x03\n" +
+	"\x14ListItemSalesRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12+\n" +
+	"\x0fitem_name_query\x18\x03 \x01(\tH\x00R\ritemNameQuery\x88\x01\x01\x12 \n" +
+	"\twear_name\x18\x04 \x01(\tH\x01R\bwearName\x88\x01\x01\x12%\n" +
+	"\fitem_wear_id\x18\x05 \x01(\x03H\x02R\n" +
+	"itemWearId\x88\x01\x01\x12 \n" +
+	"\tmin_price\x18\x06 \x01(\x01H\x03R\bminPrice\x88\x01\x01\x12 \n" +
+	"\tmax_price\x18\a \x01(\x01H\x04R\bmaxPrice\x88\x01\x01\x12 \n" +
+	"\tsold_from\x18\b \x01(\tH\x05R\bsoldFrom\x88\x01\x01\x12\x1c\n" +
+	"\asold_to\x18\t \x01(\tH\x06R\x06soldTo\x88\x01\x01B\x12\n" +
+	"\x10_item_name_queryB\f\n" +
+	"\n" +
+	"_wear_nameB\x0f\n" +
+	"\r_item_wear_idB\f\n" +
+	"\n" +
+	"_min_priceB\f\n" +
+	"\n" +
+	"_max_priceB\f\n" +
+	"\n" +
+	"_sold_fromB\n" +
+	"\n" +
+	"\b_sold_to\"\x92\x01\n" +
+	"\bItemSale\x12\x1b\n" +
+	"\titem_name\x18\x01 \x01(\tR\bitemName\x12\x1b\n" +
+	"\twear_name\x18\x02 \x01(\tR\bwearName\x12\x14\n" +
+	"\x05price\x18\x03 \x01(\x01R\x05price\x12\x1d\n" +
+	"\n" +
+	"wear_value\x18\x04 \x01(\x01R\twearValue\x12\x17\n" +
+	"\asold_on\x18\x05 \x01(\tR\x06soldOn\"q\n" +
+	"\x15ListItemSalesResponse\x12*\n" +
+	"\x05items\x18\x01 \x03(\v2\x14.parsing.v1.ItemSaleR\x05items\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x03R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x03R\x06offset2\x98\x02\n" +
 	"\x0eParsingService\x12K\n" +
 	"\n" +
-	"SyncOffers\x12\x1d.parsing.v1.SyncOffersRequest\x1a\x1e.parsing.v1.SyncOffersResponse\x12K\n" +
-	"\n" +
-	"ListOffers\x12\x1d.parsing.v1.ListOffersRequest\x1a\x1e.parsing.v1.ListOffersResponseB/Z-skinbaron-analyzer/proto/parsing/v1;parsingv1b\x06proto3"
+	"ListOffers\x12\x1d.parsing.v1.ListOffersRequest\x1a\x1e.parsing.v1.ListOffersResponse\x12c\n" +
+	"\x12ListItemSalesStats\x12%.parsing.v1.ListItemSalesStatsRequest\x1a&.parsing.v1.ListItemSalesStatsResponse\x12T\n" +
+	"\rListItemSales\x12 .parsing.v1.ListItemSalesRequest\x1a!.parsing.v1.ListItemSalesResponseB/Z-skinbaron-analyzer/proto/parsing/v1;parsingv1b\x06proto3"
 
 var (
 	file_proto_parsing_v1_parsing_proto_rawDescOnce sync.Once
@@ -585,31 +1115,39 @@ func file_proto_parsing_v1_parsing_proto_rawDescGZIP() []byte {
 	return file_proto_parsing_v1_parsing_proto_rawDescData
 }
 
-var file_proto_parsing_v1_parsing_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_parsing_v1_parsing_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_parsing_v1_parsing_proto_goTypes = []any{
-	(*SyncOffersRequest)(nil),     // 0: parsing.v1.SyncOffersRequest
-	(*SyncOffersResponse)(nil),    // 1: parsing.v1.SyncOffersResponse
-	(*ListOffersRequest)(nil),     // 2: parsing.v1.ListOffersRequest
-	(*Offer)(nil),                 // 3: parsing.v1.Offer
-	(*ListOffersResponse)(nil),    // 4: parsing.v1.ListOffersResponse
-	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
+	(*ListOffersRequest)(nil),          // 0: parsing.v1.ListOffersRequest
+	(*Offer)(nil),                      // 1: parsing.v1.Offer
+	(*ListOffersResponse)(nil),         // 2: parsing.v1.ListOffersResponse
+	(*ListItemSalesStatsRequest)(nil),  // 3: parsing.v1.ListItemSalesStatsRequest
+	(*ItemSalesStats)(nil),             // 4: parsing.v1.ItemSalesStats
+	(*ListItemSalesStatsResponse)(nil), // 5: parsing.v1.ListItemSalesStatsResponse
+	(*ListItemSalesRequest)(nil),       // 6: parsing.v1.ListItemSalesRequest
+	(*ItemSale)(nil),                   // 7: parsing.v1.ItemSale
+	(*ListItemSalesResponse)(nil),      // 8: parsing.v1.ListItemSalesResponse
+	(*timestamppb.Timestamp)(nil),      // 9: google.protobuf.Timestamp
 }
 var file_proto_parsing_v1_parsing_proto_depIdxs = []int32{
-	5, // 0: parsing.v1.ListOffersRequest.list_time:type_name -> google.protobuf.Timestamp
-	5, // 1: parsing.v1.ListOffersRequest.last_updated:type_name -> google.protobuf.Timestamp
-	5, // 2: parsing.v1.Offer.escrow_end_date:type_name -> google.protobuf.Timestamp
-	5, // 3: parsing.v1.Offer.list_time:type_name -> google.protobuf.Timestamp
-	5, // 4: parsing.v1.Offer.last_updated:type_name -> google.protobuf.Timestamp
-	3, // 5: parsing.v1.ListOffersResponse.items:type_name -> parsing.v1.Offer
-	0, // 6: parsing.v1.ParsingService.SyncOffers:input_type -> parsing.v1.SyncOffersRequest
-	2, // 7: parsing.v1.ParsingService.ListOffers:input_type -> parsing.v1.ListOffersRequest
-	1, // 8: parsing.v1.ParsingService.SyncOffers:output_type -> parsing.v1.SyncOffersResponse
-	4, // 9: parsing.v1.ParsingService.ListOffers:output_type -> parsing.v1.ListOffersResponse
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	9,  // 0: parsing.v1.ListOffersRequest.list_time:type_name -> google.protobuf.Timestamp
+	9,  // 1: parsing.v1.ListOffersRequest.last_updated:type_name -> google.protobuf.Timestamp
+	9,  // 2: parsing.v1.Offer.escrow_end_date:type_name -> google.protobuf.Timestamp
+	9,  // 3: parsing.v1.Offer.list_time:type_name -> google.protobuf.Timestamp
+	9,  // 4: parsing.v1.Offer.last_updated:type_name -> google.protobuf.Timestamp
+	1,  // 5: parsing.v1.ListOffersResponse.items:type_name -> parsing.v1.Offer
+	4,  // 6: parsing.v1.ListItemSalesStatsResponse.items:type_name -> parsing.v1.ItemSalesStats
+	7,  // 7: parsing.v1.ListItemSalesResponse.items:type_name -> parsing.v1.ItemSale
+	0,  // 8: parsing.v1.ParsingService.ListOffers:input_type -> parsing.v1.ListOffersRequest
+	3,  // 9: parsing.v1.ParsingService.ListItemSalesStats:input_type -> parsing.v1.ListItemSalesStatsRequest
+	6,  // 10: parsing.v1.ParsingService.ListItemSales:input_type -> parsing.v1.ListItemSalesRequest
+	2,  // 11: parsing.v1.ParsingService.ListOffers:output_type -> parsing.v1.ListOffersResponse
+	5,  // 12: parsing.v1.ParsingService.ListItemSalesStats:output_type -> parsing.v1.ListItemSalesStatsResponse
+	8,  // 13: parsing.v1.ParsingService.ListItemSales:output_type -> parsing.v1.ListItemSalesResponse
+	11, // [11:14] is the sub-list for method output_type
+	8,  // [8:11] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_proto_parsing_v1_parsing_proto_init() }
@@ -617,14 +1155,16 @@ func file_proto_parsing_v1_parsing_proto_init() {
 	if File_proto_parsing_v1_parsing_proto != nil {
 		return
 	}
-	file_proto_parsing_v1_parsing_proto_msgTypes[2].OneofWrappers = []any{}
+	file_proto_parsing_v1_parsing_proto_msgTypes[0].OneofWrappers = []any{}
+	file_proto_parsing_v1_parsing_proto_msgTypes[3].OneofWrappers = []any{}
+	file_proto_parsing_v1_parsing_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_parsing_v1_parsing_proto_rawDesc), len(file_proto_parsing_v1_parsing_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

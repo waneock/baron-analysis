@@ -19,16 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ParsingService_SyncOffers_FullMethodName = "/parsing.v1.ParsingService/SyncOffers"
-	ParsingService_ListOffers_FullMethodName = "/parsing.v1.ParsingService/ListOffers"
+	ParsingService_ListOffers_FullMethodName         = "/parsing.v1.ParsingService/ListOffers"
+	ParsingService_ListItemSalesStats_FullMethodName = "/parsing.v1.ParsingService/ListItemSalesStats"
+	ParsingService_ListItemSales_FullMethodName      = "/parsing.v1.ParsingService/ListItemSales"
 )
 
 // ParsingServiceClient is the client API for ParsingService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ParsingServiceClient interface {
-	SyncOffers(ctx context.Context, in *SyncOffersRequest, opts ...grpc.CallOption) (*SyncOffersResponse, error)
 	ListOffers(ctx context.Context, in *ListOffersRequest, opts ...grpc.CallOption) (*ListOffersResponse, error)
+	ListItemSalesStats(ctx context.Context, in *ListItemSalesStatsRequest, opts ...grpc.CallOption) (*ListItemSalesStatsResponse, error)
+	ListItemSales(ctx context.Context, in *ListItemSalesRequest, opts ...grpc.CallOption) (*ListItemSalesResponse, error)
 }
 
 type parsingServiceClient struct {
@@ -37,16 +39,6 @@ type parsingServiceClient struct {
 
 func NewParsingServiceClient(cc grpc.ClientConnInterface) ParsingServiceClient {
 	return &parsingServiceClient{cc}
-}
-
-func (c *parsingServiceClient) SyncOffers(ctx context.Context, in *SyncOffersRequest, opts ...grpc.CallOption) (*SyncOffersResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncOffersResponse)
-	err := c.cc.Invoke(ctx, ParsingService_SyncOffers_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *parsingServiceClient) ListOffers(ctx context.Context, in *ListOffersRequest, opts ...grpc.CallOption) (*ListOffersResponse, error) {
@@ -59,12 +51,33 @@ func (c *parsingServiceClient) ListOffers(ctx context.Context, in *ListOffersReq
 	return out, nil
 }
 
+func (c *parsingServiceClient) ListItemSalesStats(ctx context.Context, in *ListItemSalesStatsRequest, opts ...grpc.CallOption) (*ListItemSalesStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListItemSalesStatsResponse)
+	err := c.cc.Invoke(ctx, ParsingService_ListItemSalesStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *parsingServiceClient) ListItemSales(ctx context.Context, in *ListItemSalesRequest, opts ...grpc.CallOption) (*ListItemSalesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListItemSalesResponse)
+	err := c.cc.Invoke(ctx, ParsingService_ListItemSales_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ParsingServiceServer is the server API for ParsingService service.
 // All implementations must embed UnimplementedParsingServiceServer
 // for forward compatibility.
 type ParsingServiceServer interface {
-	SyncOffers(context.Context, *SyncOffersRequest) (*SyncOffersResponse, error)
 	ListOffers(context.Context, *ListOffersRequest) (*ListOffersResponse, error)
+	ListItemSalesStats(context.Context, *ListItemSalesStatsRequest) (*ListItemSalesStatsResponse, error)
+	ListItemSales(context.Context, *ListItemSalesRequest) (*ListItemSalesResponse, error)
 	mustEmbedUnimplementedParsingServiceServer()
 }
 
@@ -75,11 +88,14 @@ type ParsingServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedParsingServiceServer struct{}
 
-func (UnimplementedParsingServiceServer) SyncOffers(context.Context, *SyncOffersRequest) (*SyncOffersResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncOffers not implemented")
-}
 func (UnimplementedParsingServiceServer) ListOffers(context.Context, *ListOffersRequest) (*ListOffersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListOffers not implemented")
+}
+func (UnimplementedParsingServiceServer) ListItemSalesStats(context.Context, *ListItemSalesStatsRequest) (*ListItemSalesStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListItemSalesStats not implemented")
+}
+func (UnimplementedParsingServiceServer) ListItemSales(context.Context, *ListItemSalesRequest) (*ListItemSalesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListItemSales not implemented")
 }
 func (UnimplementedParsingServiceServer) mustEmbedUnimplementedParsingServiceServer() {}
 func (UnimplementedParsingServiceServer) testEmbeddedByValue()                        {}
@@ -102,24 +118,6 @@ func RegisterParsingServiceServer(s grpc.ServiceRegistrar, srv ParsingServiceSer
 	s.RegisterService(&ParsingService_ServiceDesc, srv)
 }
 
-func _ParsingService_SyncOffers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncOffersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ParsingServiceServer).SyncOffers(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ParsingService_SyncOffers_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ParsingServiceServer).SyncOffers(ctx, req.(*SyncOffersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ParsingService_ListOffers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListOffersRequest)
 	if err := dec(in); err != nil {
@@ -138,6 +136,42 @@ func _ParsingService_ListOffers_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ParsingService_ListItemSalesStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListItemSalesStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ParsingServiceServer).ListItemSalesStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ParsingService_ListItemSalesStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ParsingServiceServer).ListItemSalesStats(ctx, req.(*ListItemSalesStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ParsingService_ListItemSales_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListItemSalesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ParsingServiceServer).ListItemSales(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ParsingService_ListItemSales_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ParsingServiceServer).ListItemSales(ctx, req.(*ListItemSalesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ParsingService_ServiceDesc is the grpc.ServiceDesc for ParsingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -146,12 +180,16 @@ var ParsingService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ParsingServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SyncOffers",
-			Handler:    _ParsingService_SyncOffers_Handler,
-		},
-		{
 			MethodName: "ListOffers",
 			Handler:    _ParsingService_ListOffers_Handler,
+		},
+		{
+			MethodName: "ListItemSalesStats",
+			Handler:    _ParsingService_ListItemSalesStats_Handler,
+		},
+		{
+			MethodName: "ListItemSales",
+			Handler:    _ParsingService_ListItemSales_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

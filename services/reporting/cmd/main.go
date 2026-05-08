@@ -13,7 +13,7 @@ import (
 	"skinbaron-analyzer/services/reporting/internal/config"
 	"skinbaron-analyzer/services/reporting/internal/producer/kafka"
 	"skinbaron-analyzer/services/reporting/internal/repository"
-	httphndl "skinbaron-analyzer/services/reporting/internal/transport/http"
+	"skinbaron-analyzer/services/reporting/internal/transport/http/handlers"
 	"skinbaron-analyzer/services/reporting/internal/usecase"
 	"time"
 
@@ -74,7 +74,10 @@ func main() {
 	listOffersUC := usecase.NewListOffers(parsingClient)
 	syncOffersUC := usecase.NewSyncOffers(repo.JobsRepo, jobsProducer)
 
-	httpHandler := httphndl.NewOffersHandler(syncOffersUC, listOffersUC, log)
+	httpHandler := handlers.NewOffersHandler(syncOffersUC, listOffersUC, log)
+
+	itemSalesUC := usecase.NewItemSales(parsingClient)
+	itemSalesHandler := handlers.NewItemSalesHandler(itemSalesUC, log)
 
 	r := chi.NewRouter()
 
@@ -97,6 +100,11 @@ func main() {
 
 		r.Route("/sales", func(r chi.Router) {
 			r.Post("/sync", httpHandler.SyncItemSales)
+		})
+
+		r.Route("/item-sales", func(r chi.Router) {
+			r.Get("/", itemSalesHandler.ListItemSales)
+			r.Get("/stats", itemSalesHandler.ListItemSalesStats)
 		})
 	})
 

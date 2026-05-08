@@ -16,15 +16,22 @@ type ListOffersUseCase interface {
 	Execute(ctx context.Context, input usecase.ListOffersInput) (*usecase.ListOfferResult, error)
 }
 
+type ListItemSalesUseCase interface {
+	ListSales(ctx context.Context, filter domain.ListItemSalesFilter) (*domain.ListItemSalesOutput, error)
+	ListSalesStat(ctx context.Context, filter domain.ListItemSalesStatsFilter) (*domain.ListItemSalesStatsOutput, error)
+}
+
 type Handler struct {
 	pb.UnimplementedParsingServiceServer
 
-	listOffersUC ListOffersUseCase
+	listOffersUC    ListOffersUseCase
+	listItemSalesUC ListItemSalesUseCase
 }
 
-func NewHandler(listOffersUC ListOffersUseCase) *Handler {
+func NewHandler(listOffersUC ListOffersUseCase, listItemSalesUC ListItemSalesUseCase) *Handler {
 	return &Handler{
-		listOffersUC: listOffersUC,
+		listOffersUC:    listOffersUC,
+		listItemSalesUC: listItemSalesUC,
 	}
 }
 
@@ -138,4 +145,160 @@ func toTime(t *timestamppb.Timestamp) *time.Time {
 
 	val := (*t).AsTime()
 	return &val
+}
+
+func (h *Handler) ListItemSales(ctx context.Context, req *pb.ListItemSalesRequest) (*pb.ListItemSalesResponse, error) {
+	filter := domain.ListItemSalesFilter{
+		Offset: req.GetOffset(),
+		Limit:  req.GetLimit(),
+	}
+
+	if req.ItemNameQuery != nil && req.GetItemNameQuery() != "" {
+		val := req.GetItemNameQuery()
+		filter.ItemNameQuery = &val
+	}
+
+	if req.WearName != nil && req.GetWearName() != "" {
+		val := req.GetWearName()
+		filter.WearName = &val
+	}
+
+	if req.ItemWearId != nil {
+		val := req.GetItemWearId()
+		filter.ItemWearID = &val
+	}
+
+	if req.MinPrice != nil {
+		val := req.GetMinPrice()
+		filter.MinPrice = &val
+	}
+
+	if req.MaxPrice != nil {
+		val := req.GetMaxPrice()
+		filter.MaxPrice = &val
+	}
+
+	if req.SoldFrom != nil && req.GetSoldFrom() != "" {
+		val := req.GetSoldFrom()
+		filter.SoldFrom = stringToTime(val)
+	}
+
+	if req.SoldTo != nil && req.GetSoldTo() != "" {
+		val := req.GetSoldTo()
+		filter.SoldTo = stringToTime(val)
+	}
+
+	ucOutput, err := h.listItemSalesUC.ListSales(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return itemSalesOutputToResponse(*ucOutput), nil
+}
+
+func itemSalesOutputToResponse(input domain.ListItemSalesOutput) *pb.ListItemSalesResponse {
+	pbItems := make([]*pb.ItemSale, 0, len(input.Items))
+	for _, item := range input.Items {
+		pbItem := pb.ItemSale{
+			ItemName:  item.ItemName,
+			WearName:  item.WearName,
+			Price:     item.Price,
+			WearValue: item.WearValue,
+			SoldOn:    timeToString(item.SoldOn),
+		}
+		pbItems = append(pbItems, &pbItem)
+	}
+
+	return &pb.ListItemSalesResponse{
+		Items:  pbItems,
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	}
+}
+
+func stringToTime(stringTime string) *time.Time {
+	val, err := time.Parse("2006-01-02", stringTime)
+	if err != nil {
+		return nil
+	}
+	return &val
+}
+
+func timeToString(val time.Time) string {
+	return val.Format("2006-01-02")
+}
+
+func (h *Handler) ListItemSalesStats(ctx context.Context, req *pb.ListItemSalesStatsRequest) (*pb.ListItemSalesStatsResponse, error) {
+	filter := domain.ListItemSalesStatsFilter{
+		Limit:  req.GetLimit(),
+		Offset: req.GetOffset(),
+	}
+
+	if req.ItemNameQuery != nil && req.GetItemNameQuery() != "" {
+		val := req.GetItemNameQuery()
+		filter.ItemNameQuery = &val
+	}
+
+	if req.WearName != nil && req.GetWearName() != "" {
+		val := req.GetWearName()
+		filter.WearName = &val
+	}
+
+	if req.MinPrice != nil {
+		val := req.GetMinPrice()
+		filter.MinPrice = &val
+	}
+
+	if req.MaxPrice != nil {
+		val := req.GetMaxPrice()
+		filter.MaxPrice = &val
+	}
+
+	if req.SoldFrom != nil && req.GetSoldFrom() != "" {
+		val := req.GetSoldFrom()
+		filter.SoldFrom = stringToTime(val)
+	}
+
+	if req.SoldTo != nil && req.GetSoldTo() != "" {
+		val := req.GetSoldTo()
+		filter.SoldTo = stringToTime(val)
+	}
+
+	if req.MinSalesCount != nil {
+		val := req.GetMinSalesCount()
+		filter.MinSalesCount = &val
+	}
+
+	ucOutput, err := h.listItemSalesUC.ListSalesStat(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return itemSalesStateOutputToResponse(*ucOutput), nil
+}
+
+func itemSalesStateOutputToResponse(input domain.ListItemSalesStatsOutput) *pb.ListItemSalesStatsResponse {
+	pbItems := make([]*pb.ItemSalesStats, 0, len(input.Items))
+	for _, item := range input.Items {
+		pbItem := &pb.ItemSalesStats{
+			ItemId:      item.ItemID,
+			ItemName:    item.ItemName,
+			ItemWearId:  item.ItemWearID,
+			WearName:    item.WearName,
+			SalesCount:  item.SalesCount,
+			AvgPrice:    item.AvgPrice,
+			MedianPrice: item.MedianPrice,
+			MinPrice:    item.MinPrice,
+			MaxPrice:    item.MaxPrice,
+			SoldPrices:  item.SoldPrices,
+			FirstSoldOn: timeToString(item.FirstSoldOn),
+			LastSoldOn:  timeToString(item.LastSoldOn),
+		}
+		pbItems = append(pbItems, pbItem)
+	}
+	return &pb.ListItemSalesStatsResponse{
+		Items:  pbItems,
+		Limit:  input.Limit,
+		Offset: input.Offset,
+	}
 }

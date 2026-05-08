@@ -1,4 +1,4 @@
-package http
+package handlers
 
 import (
 	"context"
@@ -39,6 +39,7 @@ type OffersHandler struct {
 	logger     *slog.Logger
 }
 
+// TODO split handler by endpoints
 func NewOffersHandler(syncOffers SyncOffersService, listOffers ListOffersService, logger *slog.Logger) *OffersHandler {
 	return &OffersHandler{
 		syncOffers: syncOffers,
