@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offers</title>
+  <title>Baron Analysis</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,8 +12,36 @@
       color: #222;
     }
 
-    h1 {
+    h1, h2 {
       margin-bottom: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: #222;
+      color: white;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
     }
 
     .card {
@@ -50,6 +78,7 @@
       display: flex;
       gap: 8px;
       margin-top: 16px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -125,115 +154,288 @@
   </style>
 </head>
 <body>
-  <h1>Offers</h1>
+  <h1>Baron Analysis</h1>
 
-  <div class="card">
-    <form id="filters-form">
-      <div class="filters">
-        <div class="field">
-          <label for="limit">Limit</label>
-          <input id="limit" name="limit" type="number" value="50" min="1" />
-        </div>
-
-        <div class="field">
-          <label for="offset">Offset</label>
-          <input id="offset" name="offset" type="number" value="0" min="0" />
-        </div>
-
-        <div class="field">
-          <label for="state">State</label>
-          <input id="state" name="state" type="number" placeholder="2" />
-        </div>
-
-        <div class="field">
-          <label for="name_query">Name query</label>
-          <input id="name_query" name="name_query" type="text" placeholder="AK-47" />
-        </div>
-
-        <div class="field">
-          <label for="min_price">Min price</label>
-          <input id="min_price" name="min_price" type="number" step="0.01" />
-        </div>
-
-        <div class="field">
-          <label for="max_price">Max price</label>
-          <input id="max_price" name="max_price" type="number" step="0.01" />
-        </div>
-      </div>
-
-      <div class="actions">
-        <button type="submit">Search</button>
-        <button type="button" id="reset-btn">Reset</button>
-      </div>
-    </form>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="offers-section">Offers</button>
+    <button class="tab-btn" data-tab="sales-section">Item Sales</button>
+    <button class="tab-btn" data-tab="stats-section">Sales Stats</button>
   </div>
 
-  <div class="card">
-    <div class="meta">
-      <div><strong>Total:</strong> <span id="total">0</span></div>
-      <div><strong>Limit:</strong> <span id="meta-limit">0</span></div>
-      <div><strong>Offset:</strong> <span id="meta-offset">0</span></div>
+  <!-- OFFERS -->
+  <section id="offers-section" class="section active">
+    <h2>Offers</h2>
+
+    <div class="card">
+      <form id="offers-form">
+        <div class="filters">
+          <div class="field">
+            <label for="offers-limit">Limit</label>
+            <input id="offers-limit" name="limit" type="number" value="50" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="offers-offset">Offset</label>
+            <input id="offers-offset" name="offset" type="number" value="0" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="offers-state">State</label>
+            <input id="offers-state" name="state" type="number" placeholder="2" />
+          </div>
+
+          <div class="field">
+            <label for="offers-name-query">Name query</label>
+            <input id="offers-name-query" name="name_query" type="text" placeholder="AK-47" />
+          </div>
+
+          <div class="field">
+            <label for="offers-min-price">Min price</label>
+            <input id="offers-min-price" name="min_price" type="number" step="0.01" />
+          </div>
+
+          <div class="field">
+            <label for="offers-max-price">Max price</label>
+            <input id="offers-max-price" name="max_price" type="number" step="0.01" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Search</button>
+          <button type="button" id="offers-reset-btn">Reset</button>
+        </div>
+      </form>
     </div>
 
-    <div id="status" class="status"></div>
+    <div class="card">
+      <div class="meta">
+        <div><strong>Total:</strong> <span id="offers-total">0</span></div>
+        <div><strong>Limit:</strong> <span id="offers-meta-limit">0</span></div>
+        <div><strong>Offset:</strong> <span id="offers-meta-offset">0</span></div>
+      </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Commission</th>
-            <th>State</th>
-            <th>Wear</th>
-            <th>List Time</th>
-            <th>Last Updated</th>
-            <th>Addons</th>
-          </tr>
-        </thead>
-        <tbody id="offers-body">
-          <tr>
-            <td colspan="9">No data</td>
-          </tr>
-        </tbody>
-      </table>
+      <div id="offers-status" class="status"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Commission</th>
+              <th>State</th>
+              <th>Wear</th>
+              <th>List Time</th>
+              <th>Last Updated</th>
+              <th>Addons</th>
+            </tr>
+          </thead>
+          <tbody id="offers-body">
+            <tr><td colspan="9">No data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button type="button" id="offers-prev-btn">Prev</button>
+        <button type="button" id="offers-next-btn">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RAW ITEM SALES -->
+  <section id="sales-section" class="section">
+    <h2>Item Sales</h2>
+
+    <div class="card">
+      <form id="sales-form">
+        <div class="filters">
+          <div class="field">
+            <label for="sales-limit">Limit</label>
+            <input id="sales-limit" name="limit" type="number" value="50" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="sales-offset">Offset</label>
+            <input id="sales-offset" name="offset" type="number" value="0" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="sales-name-query">Item name query</label>
+            <input id="sales-name-query" name="name_query" type="text" placeholder="M4A1-S" />
+          </div>
+
+          <div class="field">
+            <label for="sales-wear-name">Wear name</label>
+            <input id="sales-wear-name" name="wear_name" type="text" placeholder="Field-Tested" />
+          </div>
+
+          <div class="field">
+            <label for="sales-wear-id">Wear ID</label>
+            <input id="sales-wear-id" name="wear_id" type="number" />
+          </div>
+
+          <div class="field">
+            <label for="sales-min-price">Min price</label>
+            <input id="sales-min-price" name="min_price" type="number" step="0.01" />
+          </div>
+
+          <div class="field">
+            <label for="sales-max-price">Max price</label>
+            <input id="sales-max-price" name="max_price" type="number" step="0.01" />
+          </div>
+
+          <div class="field">
+            <label for="sales-sold-from">Sold from</label>
+            <input id="sales-sold-from" name="sold_from" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="sales-sold-to">Sold to</label>
+            <input id="sales-sold-to" name="sold_to" type="date" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Search</button>
+          <button type="button" id="sales-reset-btn">Reset</button>
+        </div>
+      </form>
     </div>
 
-    <div class="pagination">
-      <button type="button" id="prev-btn">Prev</button>
-      <button type="button" id="next-btn">Next</button>
+    <div class="card">
+      <div class="meta">
+        <div><strong>Limit:</strong> <span id="sales-meta-limit">0</span></div>
+        <div><strong>Offset:</strong> <span id="sales-meta-offset">0</span></div>
+      </div>
+
+      <div id="sales-status" class="status"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Wear Name</th>
+              <th>Price</th>
+              <th>Wear Value</th>
+              <th>Sold On</th>
+            </tr>
+          </thead>
+          <tbody id="sales-body">
+            <tr><td colspan="5">No data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button type="button" id="sales-prev-btn">Prev</button>
+        <button type="button" id="sales-next-btn">Next</button>
+      </div>
     </div>
-  </div>
+  </section>
+
+  <!-- ITEM SALES STATS -->
+  <section id="stats-section" class="section">
+    <h2>Sales Stats</h2>
+
+    <div class="card">
+      <form id="stats-form">
+        <div class="filters">
+          <div class="field">
+            <label for="stats-limit">Limit</label>
+            <input id="stats-limit" name="limit" type="number" value="50" min="1" />
+          </div>
+
+          <div class="field">
+            <label for="stats-offset">Offset</label>
+            <input id="stats-offset" name="offset" type="number" value="0" min="0" />
+          </div>
+
+          <div class="field">
+            <label for="stats-name-query">Item name query</label>
+            <input id="stats-name-query" name="name_query" type="text" placeholder="M4A1-S" />
+          </div>
+
+          <div class="field">
+            <label for="stats-wear-name">Wear name</label>
+            <input id="stats-wear-name" name="wear_name" type="text" placeholder="Field-Tested" />
+          </div>
+
+          <div class="field">
+            <label for="stats-min-price">Min price</label>
+            <input id="stats-min-price" name="min_price" type="number" step="0.01" />
+          </div>
+
+          <div class="field">
+            <label for="stats-max-price">Max price</label>
+            <input id="stats-max-price" name="max_price" type="number" step="0.01" />
+          </div>
+
+          <div class="field">
+            <label for="stats-sold-from">Sold from</label>
+            <input id="stats-sold-from" name="sold_from" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="stats-sold-to">Sold to</label>
+            <input id="stats-sold-to" name="sold_to" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="stats-min-sales-count">Min sales count</label>
+            <input id="stats-min-sales-count" name="min_sales_count" type="number" min="1" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit">Search</button>
+          <button type="button" id="stats-reset-btn">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="meta">
+        <div><strong>Limit:</strong> <span id="stats-meta-limit">0</span></div>
+        <div><strong>Offset:</strong> <span id="stats-meta-offset">0</span></div>
+      </div>
+
+      <div id="stats-status" class="status"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item ID</th>
+              <th>Item Name</th>
+              <th>Wear ID</th>
+              <th>Wear Name</th>
+              <th>Sales Count</th>
+              <th>Avg Price</th>
+              <th>Median Price</th>
+              <th>Min Price</th>
+              <th>Max Price</th>
+              <th>First Sold</th>
+              <th>Last Sold</th>
+              <th>Sold Prices</th>
+            </tr>
+          </thead>
+          <tbody id="stats-body">
+            <tr><td colspan="12">No data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button type="button" id="stats-prev-btn">Prev</button>
+        <button type="button" id="stats-next-btn">Next</button>
+      </div>
+    </div>
+  </section>
 
   <script>
-    const form = document.getElementById("filters-form");
-    const resetBtn = document.getElementById("reset-btn");
-    const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-    const offersBody = document.getElementById("offers-body");
-    const statusEl = document.getElementById("status");
-    const totalEl = document.getElementById("total");
-    const metaLimitEl = document.getElementById("meta-limit");
-    const metaOffsetEl = document.getElementById("meta-offset");
-
-    function setStatus(message, isError = false) {
-      statusEl.textContent = message;
-      statusEl.className = isError ? "status error" : "status";
-    }
-
-    function buildQueryString() {
-      const formData = new FormData(form);
-      const params = new URLSearchParams();
-
-      for (const [key, value] of formData.entries()) {
-        if (value === "") continue;
-        params.set(key, value);
-      }
-
-      return params.toString();
-    }
-
     function escapeHtml(value) {
       if (value === null || value === undefined) return "";
       return String(value)
@@ -247,15 +449,13 @@
     function formatDate(value) {
       if (!value) return "";
       const date = new Date(value);
-      if (Number.isNaN(date.getTime())) {
-        return escapeHtml(value);
-      }
+      if (Number.isNaN(date.getTime())) return escapeHtml(value);
       return escapeHtml(date.toLocaleString());
     }
 
-    function formatAddons(addons) {
-      if (!addons || addons.length === 0) return "";
-      return addons.map(escapeHtml).join(", ");
+    function formatDateOnly(value) {
+      if (!value) return "";
+      return escapeHtml(value);
     }
 
     function formatNumber(value) {
@@ -263,13 +463,63 @@
       return escapeHtml(value);
     }
 
-    function renderRows(items) {
+    function formatPrice(value) {
+      if (value === null || value === undefined || value === "") return "";
+      const n = Number(value);
+      if (Number.isNaN(n)) return escapeHtml(value);
+      return escapeHtml(n.toFixed(2));
+    }
+
+    function formatAddons(addons) {
+      if (!addons || addons.length === 0) return "";
+      return addons.map(escapeHtml).join(", ");
+    }
+
+    function formatSoldPrices(prices) {
+      if (!prices || prices.length === 0) return "";
+      return prices.map(p => Number(p).toFixed(2)).join(", ");
+    }
+
+    function setStatus(el, message, isError = false) {
+      el.textContent = message;
+      el.className = isError ? "status error" : "status";
+    }
+
+    function buildQueryString(form) {
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+
+      for (const [key, value] of formData.entries()) {
+        if (value === "") continue;
+        params.set(key, value);
+      }
+
+      return params.toString();
+    }
+
+    function setupTabs() {
+      const buttons = document.querySelectorAll(".tab-btn");
+      const sections = document.querySelectorAll(".section");
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          buttons.forEach(b => b.classList.remove("active"));
+          sections.forEach(s => s.classList.remove("active"));
+
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.tab).classList.add("active");
+        });
+      });
+    }
+
+    // OFFERS
+    const offersForm = document.getElementById("offers-form");
+    const offersBody = document.getElementById("offers-body");
+    const offersStatus = document.getElementById("offers-status");
+
+    function renderOfferRows(items) {
       if (!items || items.length === 0) {
-        offersBody.innerHTML = `
-          <tr>
-            <td colspan="9">No data</td>
-          </tr>
-        `;
+        offersBody.innerHTML = `<tr><td colspan="9">No data</td></tr>`;
         return;
       }
 
@@ -277,8 +527,8 @@
         <tr>
           <td>${escapeHtml(item.id)}</td>
           <td>${escapeHtml(item.name)}</td>
-          <td>${formatNumber(item.price)}</td>
-          <td>${formatNumber(item.commission)}</td>
+          <td>${formatPrice(item.price)}</td>
+          <td>${formatPrice(item.commission)}</td>
           <td>${escapeHtml(item.state)}</td>
           <td>${formatNumber(item.wear)}</td>
           <td>${formatDate(item.list_time)}</td>
@@ -290,21 +540,15 @@
 
     async function fetchOffers() {
       try {
-        setStatus("Loading...");
-        offersBody.innerHTML = `
-          <tr>
-            <td colspan="9">Loading...</td>
-          </tr>
-        `;
+        setStatus(offersStatus, "Loading...");
+        offersBody.innerHTML = `<tr><td colspan="9">Loading...</td></tr>`;
 
-        const query = buildQueryString();
+        const query = buildQueryString(offersForm);
         const url = query ? `/v1/offers/list?${query}` : "/v1/offers/list";
 
         const res = await fetch(url, {
           method: "GET",
-          headers: {
-            "Accept": "application/json"
-          }
+          headers: { "Accept": "application/json" }
         });
 
         if (!res.ok) {
@@ -314,47 +558,203 @@
 
         const data = await res.json();
 
-        totalEl.textContent = data.total ?? 0;
-        metaLimitEl.textContent = data.limit ?? 0;
-        metaOffsetEl.textContent = data.offset ?? 0;
+        document.getElementById("offers-total").textContent = data.total ?? 0;
+        document.getElementById("offers-meta-limit").textContent = data.limit ?? 0;
+        document.getElementById("offers-meta-offset").textContent = data.offset ?? 0;
 
-        renderRows(data.items || []);
-        setStatus(`Loaded ${data.items?.length || 0} rows`);
+        renderOfferRows(data.items || []);
+        setStatus(offersStatus, `Loaded ${data.items?.length || 0} rows`);
       } catch (err) {
         console.error(err);
-        renderRows([]);
-        setStatus(`Request failed: ${err.message}`, true);
+        renderOfferRows([]);
+        setStatus(offersStatus, `Request failed: ${err.message}`, true);
       }
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      document.getElementById("offset").value = "0";
-      await fetchOffers();
-    });
+    // SALES
+    const salesForm = document.getElementById("sales-form");
+    const salesBody = document.getElementById("sales-body");
+    const salesStatus = document.getElementById("sales-status");
 
-    resetBtn.addEventListener("click", async () => {
-      form.reset();
-      document.getElementById("limit").value = "50";
-      document.getElementById("offset").value = "0";
-      await fetchOffers();
-    });
+    function renderSalesRows(items) {
+      if (!items || items.length === 0) {
+        salesBody.innerHTML = `<tr><td colspan="5">No data</td></tr>`;
+        return;
+      }
 
-    prevBtn.addEventListener("click", async () => {
-      const limit = Number(document.getElementById("limit").value || 50);
-      const offsetInput = document.getElementById("offset");
-      const currentOffset = Number(offsetInput.value || 0);
-      offsetInput.value = String(Math.max(0, currentOffset - limit));
-      await fetchOffers();
-    });
+      salesBody.innerHTML = items.map(item => `
+        <tr>
+          <td>${escapeHtml(item.item_name)}</td>
+          <td>${escapeHtml(item.wear_name)}</td>
+          <td>${formatPrice(item.price)}</td>
+          <td>${formatNumber(item.wear_value)}</td>
+          <td>${formatDateOnly(item.sold_on)}</td>
+        </tr>
+      `).join("");
+    }
 
-    nextBtn.addEventListener("click", async () => {
-      const limit = Number(document.getElementById("limit").value || 50);
-      const offsetInput = document.getElementById("offset");
-      const currentOffset = Number(offsetInput.value || 0);
-      offsetInput.value = String(currentOffset + limit);
-      await fetchOffers();
-    });
+    async function fetchItemSales() {
+      try {
+        setStatus(salesStatus, "Loading...");
+        salesBody.innerHTML = `<tr><td colspan="5">Loading...</td></tr>`;
+
+        const query = buildQueryString(salesForm);
+        const url = query ? `/v1/item-sales?${query}` : "/v1/item-sales";
+
+        const res = await fetch(url, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        document.getElementById("sales-meta-limit").textContent = data.limit ?? 0;
+        document.getElementById("sales-meta-offset").textContent = data.offset ?? 0;
+
+        renderSalesRows(data.items || []);
+        setStatus(salesStatus, `Loaded ${data.items?.length || 0} rows`);
+      } catch (err) {
+        console.error(err);
+        renderSalesRows([]);
+        setStatus(salesStatus, `Request failed: ${err.message}`, true);
+      }
+    }
+
+    // STATS
+    const statsForm = document.getElementById("stats-form");
+    const statsBody = document.getElementById("stats-body");
+    const statsStatus = document.getElementById("stats-status");
+
+    function renderStatsRows(items) {
+      if (!items || items.length === 0) {
+        statsBody.innerHTML = `<tr><td colspan="12">No data</td></tr>`;
+        return;
+      }
+
+      statsBody.innerHTML = items.map(item => `
+        <tr>
+          <td>${escapeHtml(item.item_id)}</td>
+          <td>${escapeHtml(item.item_name)}</td>
+          <td>${escapeHtml(item.item_wear_id)}</td>
+          <td>${escapeHtml(item.wear_name)}</td>
+          <td>${escapeHtml(item.sales_count)}</td>
+          <td>${formatPrice(item.avg_price)}</td>
+          <td>${formatPrice(item.median_price)}</td>
+          <td>${formatPrice(item.min_price)}</td>
+          <td>${formatPrice(item.max_price)}</td>
+          <td>${formatDateOnly(item.first_sold_on)}</td>
+          <td>${formatDateOnly(item.last_sold_on)}</td>
+          <td>${escapeHtml(formatSoldPrices(item.sold_prices))}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function fetchItemSalesStats() {
+      try {
+        setStatus(statsStatus, "Loading...");
+        statsBody.innerHTML = `<tr><td colspan="12">Loading...</td></tr>`;
+
+        const query = buildQueryString(statsForm);
+        const url = query ? `/v1/item-sales/stats?${query}` : "/v1/item-sales/stats";
+
+        const res = await fetch(url, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        document.getElementById("stats-meta-limit").textContent = data.limit ?? 0;
+        document.getElementById("stats-meta-offset").textContent = data.offset ?? 0;
+
+        renderStatsRows(data.items || []);
+        setStatus(statsStatus, `Loaded ${data.items?.length || 0} rows`);
+      } catch (err) {
+        console.error(err);
+        renderStatsRows([]);
+        setStatus(statsStatus, `Request failed: ${err.message}`, true);
+      }
+    }
+
+    function setupPagination(formID, offsetID, limitID, fetchFn) {
+      const form = document.getElementById(formID);
+      const offsetInput = document.getElementById(offsetID);
+      const limitInput = document.getElementById(limitID);
+
+      return {
+        next: async () => {
+          const limit = Number(limitInput.value || 50);
+          const currentOffset = Number(offsetInput.value || 0);
+          offsetInput.value = String(currentOffset + limit);
+          await fetchFn();
+        },
+        prev: async () => {
+          const limit = Number(limitInput.value || 50);
+          const currentOffset = Number(offsetInput.value || 0);
+          offsetInput.value = String(Math.max(0, currentOffset - limit));
+          await fetchFn();
+        },
+        reset: async () => {
+          form.reset();
+          limitInput.value = "50";
+          offsetInput.value = "0";
+          await fetchFn();
+        },
+        submit: async (e) => {
+          e.preventDefault();
+          offsetInput.value = "0";
+          await fetchFn();
+        }
+      };
+    }
+
+    setupTabs();
+
+    const offersPagination = setupPagination(
+      "offers-form",
+      "offers-offset",
+      "offers-limit",
+      fetchOffers
+    );
+
+    offersForm.addEventListener("submit", offersPagination.submit);
+    document.getElementById("offers-reset-btn").addEventListener("click", offersPagination.reset);
+    document.getElementById("offers-prev-btn").addEventListener("click", offersPagination.prev);
+    document.getElementById("offers-next-btn").addEventListener("click", offersPagination.next);
+
+    const salesPagination = setupPagination(
+      "sales-form",
+      "sales-offset",
+      "sales-limit",
+      fetchItemSales
+    );
+
+    salesForm.addEventListener("submit", salesPagination.submit);
+    document.getElementById("sales-reset-btn").addEventListener("click", salesPagination.reset);
+    document.getElementById("sales-prev-btn").addEventListener("click", salesPagination.prev);
+    document.getElementById("sales-next-btn").addEventListener("click", salesPagination.next);
+
+    const statsPagination = setupPagination(
+      "stats-form",
+      "stats-offset",
+      "stats-limit",
+      fetchItemSalesStats
+    );
+
+    statsForm.addEventListener("submit", statsPagination.submit);
+    document.getElementById("stats-reset-btn").addEventListener("click", statsPagination.reset);
+    document.getElementById("stats-prev-btn").addEventListener("click", statsPagination.prev);
+    document.getElementById("stats-next-btn").addEventListener("click", statsPagination.next);
 
     fetchOffers();
   </script>
